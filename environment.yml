@@ -140,6 +140,7 @@ dependencies:
   - pycparser=2.21
   - pydantic=2.11.7
   - pydantic-core=2.33.2
+  - pydantic-settings=2.10.1
   - pygments=2.19.1
   - pyjwt=2.10.1
   - pyparsing=3.2.0
@@ -148,6 +149,7 @@ dependencies:
   - pysocks=1.7.1
   - python=3.12.3
   - python-dateutil=2.9.0post0
+  - python-dotenv=1.1.1
   - python-fastjsonschema=2.20.0
   - python-json-logger=3.2.1
   - python-tzdata=2025.2
