@@ -1,0 +1,31 @@
+name: edu_feedback_analysis
+channels:
+  - conda-forge
+  - defaults
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+  - https://repo.anaconda.com/pkgs/msys2
+dependencies:
+  - python=3.12
+  - numpy
+  - pandas
+  - scikit-learn
+  - jupyter
+  - notebook
+  - fastapi
+  - seaborn
+  - cchardet
+  - xgboost
+  - uvicorn
+  - statsmodels
+  - langchain
+  - passlib
+  - pyjwt
+  - sqlmodel
+  - asyncpg
+  - pydantic-settings
+  - lightgbm
+  - optuna
+  - scikit-optimize
+  - imbalanced-learn
+prefix: D:\Anaconda\envs\edu_feedback_analysis
