@@ -25,4 +25,7 @@ dependencies:
   - asyncpg
   - pydantic-settings
   - lightgbm
+  - optuna
+  - scikit-optimize
+  - imbalanced-learn
 prefix: D:\Anaconda\envs\edu_feedback_analysis
