@@ -4,7 +4,7 @@ import Home from '@/views/Home.vue'
 const Main = () => import('@/views/Main.vue')
 const test = () => import('@/views/Placeholder.vue')
 
-// const TeachingQuality = () => import('@/views/TeachingQuality.vue')
+const TeachingQuality = () => import('@/components/layout/NoName.vue')
 // const StudentSatisfaction = () => import('@/views/StudentSatisfaction.vue')
 // const CourseEvaluation = () => import('@/views/CourseEvaluation.vue')
 // const TeacherEvaluation = () => import('@/views/TeacherEvaluation.vue')
@@ -22,7 +22,7 @@ const routes = [
         children: [
             // navItems 路由
             { path: 'home', name: 'Overview', component: Home }, // 默认子路由
-            { path: 'teaching-quality', name: 'TeachingQuality', component: test },
+            { path: 'teaching-quality', name: 'TeachingQuality', component: TeachingQuality },
             { path: 'student-satisfaction', name: 'StudentSatisfaction', component: test },
             { path: 'course-evaluation', name: 'CourseEvaluation', component: test },
             { path: 'teacher-evaluation', name: 'TeacherEvaluation', component: test },

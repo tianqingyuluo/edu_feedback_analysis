@@ -22,7 +22,9 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh; /* 改为 100vh 而不是 min-height */
+  overflow: hidden; /* 禁止整个容器滚动 */
+
 }
 
 .main-content-wrapper {

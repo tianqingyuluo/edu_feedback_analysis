@@ -10,9 +10,10 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
-    "@vueuse/core": "^13.6.0",
+    "@vueuse/core": "^13.7.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "echarts": "^6.0.0",
     "lucide-vue-next": "^0.539.0",
     "reka-ui": "^2.4.1",
     "tailwind-merge": "^3.3.1",
