@@ -5,6 +5,8 @@ const Main = () => import('@/views/Main.vue')
 const test = () => import('@/views/Placeholder.vue')
 
 const TeachingQuality = () => import('@/components/layout/NoName.vue')
+const DataManagement = () => import('@/views/DataManagement.vue')
+const PersonManagement = () => import('@/views/PersonManagement.vue')
 // const StudentSatisfaction = () => import('@/views/StudentSatisfaction.vue')
 // const CourseEvaluation = () => import('@/views/CourseEvaluation.vue')
 // const TeacherEvaluation = () => import('@/views/TeacherEvaluation.vue')
@@ -23,10 +25,10 @@ const routes = [
             // navItems 路由
             { path: 'home', name: 'Overview', component: Home }, // 默认子路由
             { path: 'teaching-quality', name: 'TeachingQuality', component: TeachingQuality },
-            { path: 'student-satisfaction', name: 'StudentSatisfaction', component: test },
+            { path: 'student-satisfaction', name: 'StudentSatisfaction', component: PersonManagement },
             { path: 'course-evaluation', name: 'CourseEvaluation', component: test },
             { path: 'teacher-evaluation', name: 'TeacherEvaluation', component: test },
-            { path: 'data-management', name: 'DataManagement', component: test },
+            { path: 'data-management', name: 'DataManagement', component: DataManagement },
             { path: 'system-settings', name: 'SystemSettings', component:test },
 
             // tabs 路由
