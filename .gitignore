@@ -39,7 +39,6 @@ data/intermediate/**/*.json
 data/processed/**/*.json
 
 # 模型文件
-models/
 *.pkl
 *.joblib
 *.h5
