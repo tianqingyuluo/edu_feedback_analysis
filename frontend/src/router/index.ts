@@ -16,6 +16,8 @@ const PersonManagement = () => import('@/views/PersonManagement.vue')
 // const Analysis = () => import('@/views/Analysis.vue')
 // const Chat = () => import('@/views/Chat.vue')
 
+const Login=()=>import('@/login/Index.vue')
+
 const routes = [
     {
         path: '/',
@@ -34,9 +36,13 @@ const routes = [
             // tabs 路由
             { path: 'data', name: 'Data', component: test },
             { path: 'analysis', name: 'Analysis', component: test },
-            { path: 'chat', name: 'Chat', component: test }
+            { path: 'chat', name: 'Chat', component: test },
+
+
         ]
-    }
+    },
+    {path: '/login', name: 'Login', component: Login},
+
 ]
 
 const router = createRouter({
