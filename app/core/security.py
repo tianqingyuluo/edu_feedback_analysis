@@ -1,3 +1,5 @@
+import asyncio
+
 import jwt
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
@@ -7,7 +9,7 @@ from app.core.config import settings
 # 密码哈希
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+async def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     验证密码
 
@@ -15,18 +17,18 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     :param hashed_password: 数据库哈希密码
     :return: bool: 是否匹配
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    return await asyncio.to_thread(pwd_context.verify,plain_password, hashed_password)
 
-def get_password_hash(password: str) -> str:
+async def get_password_hash(password: str) -> str:
     """
     获取密码哈希
 
     :param password: 明文密码
     :return: str: 密码哈希
     """
-    return pwd_context.hash(password)
+    return await asyncio.to_thread(get_password_hash, password)
 
-def create_jwt_token(data: dict, expires_delta: timedelta | None = None) -> str:
+async def create_jwt_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """
     创建 JWT 令牌
 
@@ -45,7 +47,7 @@ def create_jwt_token(data: dict, expires_delta: timedelta | None = None) -> str:
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
     return encoded_jwt
 
-def decode_jwt_token(token: str) -> dict:
+async def decode_jwt_token(token: str) -> dict:
     """
     解码JWT令牌
 
