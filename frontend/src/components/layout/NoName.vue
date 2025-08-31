@@ -319,7 +319,6 @@ onUnmounted(() => {
   flex-direction: column;
   height: 90vh; /* 确保容器有足够的高度 */
   padding: 20px;
-  background-color: #f5f7fa;
 }
 
 .control-bar {
