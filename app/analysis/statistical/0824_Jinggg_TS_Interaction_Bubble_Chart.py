@@ -44,7 +44,7 @@ def generate_json(df, output_json):
 # 主程序
 if __name__ == '__main__':
     # 输入输出路径
-    INPUT_FILE = '../../../../data/intermediate/初步清洗_比赛数据.csv'
+    INPUT_FILE = '../../../data/intermediate/初步清洗_比赛数据.csv'
     OUTPUT_JSON = '师生互动数据.json'
 
     try:

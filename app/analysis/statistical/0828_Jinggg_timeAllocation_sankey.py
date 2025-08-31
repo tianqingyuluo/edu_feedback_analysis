@@ -113,7 +113,7 @@ def process_student_time_sankey_to_single_file(csv_file_path, output_filename="c
 
 if __name__ == "__main__":
     # 配置你的CSV文件路径
-    csv_path = '../../../../data/intermediate/初步清洗_比赛数据.csv'
+    csv_path = '../../../data/intermediate/初步清洗_比赛数据.csv'
 
     # 处理数据并生成合并的桑基图JSON
     try:
