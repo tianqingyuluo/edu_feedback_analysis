@@ -8,6 +8,8 @@ import {
   SidebarMenuButton
 } from "@/components/ui/sidebar";
 import {useRoute, useRouter} from "vue-router";
+import { useRoutesStore } from '@/store/routeStore.ts';
+import type { AppRoute } from '@/store/routeStore.ts'; // 导入 AppRoute 类型以供使用
 
 const navItems = [
   { name: "概览", path: "/home" },
@@ -18,17 +20,32 @@ const navItems = [
   { name: "数据管理", path: "/data-management" },
   { name: "系统设置", path: "/system-settings" }
 ];
+
 const route = useRoute();
 const router = useRouter();
+const routesStore = useRoutesStore(); // 初始化 Pinia store
+
 const isActiveTab = (tabRoute: string) => {
   return route.path.startsWith(tabRoute);
 };
-const navigateTo = (path: string) => { // 将参数名改为 path 更清晰
-  router.push(path);
+
+// 修改 navigateTo (或者使用 item.path 和 item.name)
+const navigateTo = (item: { path: string; name: string }) => {
+  // 1. 检查 routesStore 中是否已存在相同路径的路由，避免重复添加
+  const exists = routesStore.routeList.some((r: AppRoute) => r.path === item.path);
+
+  if (!exists) {
+    // 2. 将当前路由添加到 Pinia Store
+    // 注意：addRoute 期待 path 和 name 作为参数
+    routesStore.addRoute(item.path, item.name);
+  }
+
+  // 3. 执行路由跳转
+  router.push(item.path);
 };
 </script>
+
 <template>
-  <!-- 1. 侧栏背景改为白色，移除 bg-gray-800 -->
   <Sidebar collapsible="offcanvas" class="bg-white border-r border-gray-200">
     <SidebarContent>
       <SidebarGroup class="p-0">
@@ -38,30 +55,26 @@ const navigateTo = (path: string) => { // 将参数名改为 path 更清晰
               :key="item.path"
               class="py-3 transition-colors duration-200"
               :class="{
-                // 3. 悬停效果：悬停时变为浅灰色背景
                 'hover:bg-gray-100': !isActiveTab(item.path),
-                // 4. 选中状态的背景改为浅蓝色，并增加圆角
                 'bg-blue-50 text-blue-600 rounded-lg mx-2': isActiveTab(item.path)
               }"
-              @click="navigateTo(item.path)"
+              @click="navigateTo(item)"
           >
-            <SidebarMenuButton
-                asChild
-                class="w-full pointer-events-none"
-            >
-              <router-link
-                  :to="item.path"
-                  class="sidebar-link block py-2 text-xl  rounded-none pl-8"
-                  :class="{
-                    // 2. 选中状态文字变为蓝色
+          <SidebarMenuButton
+              asChild
+              class="w-full pointer-events-none"
+          >
+            <router-link
+                :to="item.path"
+                class="sidebar-link block py-2 text-xl rounded-none pl-8"
+                :class="{
                     'text-blue-600': isActiveTab(item.path),
-                    // 2. 默认文字颜色变为黑色
                     'text-gray-900': !isActiveTab(item.path)
                   }"
-              >
-                {{ item.name }}
-              </router-link>
-            </SidebarMenuButton>
+            >
+              {{ item.name }}
+            </router-link>
+          </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroup>
@@ -71,5 +84,4 @@ const navigateTo = (path: string) => { // 将参数名改为 path 更清晰
 
 <style scoped>
 /* 如果有需要，可以在这里添加额外的样式，但 Tailwind 应该足够了 */
-/* 确保 Sidebar 组件本身的宽度定义在布局组件中或者它自己有一个默认值 */
 </style>
