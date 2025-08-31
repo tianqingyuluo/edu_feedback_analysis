@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.lifespan import lifespan
 from app.api.v1.routers import api_router
@@ -27,6 +28,15 @@ app.add_exception_handler(InvalidCredentialsError, invalid_credentials_handler) 
 app.add_exception_handler(AuthenticationError, authentication_error_handler) # type: ignore
 app.add_exception_handler(AuthorizationError, authorization_error_handler) # type: ignore
 app.add_exception_handler(RequestValidationError, validation_exception_handler) # type: ignore
+
+# 允许所有跨域请求
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(api_router.api_router, prefix="/api/v1")
 
