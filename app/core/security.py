@@ -19,6 +19,13 @@ async def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     return await asyncio.to_thread(pwd_context.verify,plain_password, hashed_password)
 
+def _sync_hash_password(plain_password: str) -> str:
+    """同步函数：使用 bcrypt 对密码进行哈希。"""
+    # 哈希密码
+    hashed_password = pwd_context.hash(plain_password)
+    # 将哈希值解码为字符串以存储
+    return hashed_password
+
 async def get_password_hash(password: str) -> str:
     """
     获取密码哈希
@@ -26,7 +33,7 @@ async def get_password_hash(password: str) -> str:
     :param password: 明文密码
     :return: str: 密码哈希
     """
-    return await asyncio.to_thread(get_password_hash, password)
+    return await asyncio.to_thread(_sync_hash_password, password)
 
 async def create_jwt_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """

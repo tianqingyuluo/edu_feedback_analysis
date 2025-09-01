@@ -6,6 +6,7 @@ from sqlmodel import select
 from app.db.session import get_session
 from app.core.security import decode_jwt_token
 from app.db.models.user import User
+from app.enum.enums import UserRole
 from app.exception.exceptions.user import UserNotFoundError, AuthenticationError, AuthorizationError
 
 # 创建HTTP Bearer安全方案实例
@@ -63,6 +64,6 @@ async def get_current_admin_user(
     :return: 当前管理员用户对象
     :raises: AuthorizationError: 用户不是管理员
     """
-    if current_user.role.value != "admin":
+    if current_user.role.value != UserRole.ADMIN.value:
         raise AuthorizationError("需要管理员权限")
     return current_user

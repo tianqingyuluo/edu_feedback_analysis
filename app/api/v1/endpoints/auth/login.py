@@ -49,7 +49,7 @@ async def login(
         "http_status": 200,
         "token": access_token,
         "message": UserRead(
-            id=user.id,
+            id=str(user.id),
             username=user.username,
             phone=user.phone,
             role=user.role,
