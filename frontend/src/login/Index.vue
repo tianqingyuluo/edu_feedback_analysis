@@ -1,22 +1,24 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { login } from '@/api/user.ts'
+import {ref} from 'vue'
+import {useRouter} from 'vue-router'
+import {login} from '@/api/user.ts'
+
 const router = useRouter()
 
 import {useUserStore} from "@/store/userStore.js";
 import {ElMessage} from "element-plus";
+
 const userStore = useUserStore()
 
 // 定义表单数据
 const formData = ref({
-  username: '',
+  phone: '',
   password: ''
 })
 
 // 定义校验状态
 const errors = ref({
-  username: '',
+  phone: '',
   password: ''
 })
 
@@ -24,15 +26,15 @@ const errors = ref({
 const validateForm = () => {
   let isValid = true
   // 重置错误信息
-  errors.value.username = ''
+  errors.value.phone = ''
   errors.value.password = ''
   
-  // 校验用户名
-  if (!formData.value.username.trim()) {
-    errors.value.username = '请输入用户名'
+  // 校验手机号
+  if (!formData.value.phone.trim()) {
+    errors.value.phone = '请输入手机号'
     isValid = false
-  } else if (formData.value.username.trim().length < 3) {
-    errors.value.username = '用户名至少3个字符'
+  } else if (!/^1[3-9]\d{9}$/.test(formData.value.phone.trim())) {
+    errors.value.phone = '请输入正确的手机号'
     isValid = false
   }
   
@@ -54,6 +56,7 @@ const handleLogin = async () => {
     const res = await login(formData.value)
     userStore.setUserInfo(res.message)
     userStore.setToken(res.token)
+    await router.push('/home')
     ElMessage.success('登录成功')
   } else {
     ElMessage.error('请修正表单错误后再提交')
@@ -66,15 +69,15 @@ const handleLogin = async () => {
   <div class="login-box">
     <h2 class="login-title">用户登录</h2>
     
-    <!-- 用户名 -->
+    <!-- 手机号 -->
     <div class="form-item">
       <input
           type="text"
-          placeholder="请输入用户名"
+          placeholder="请输入手机号"
           class="login-input"
-          v-model="formData.username"
+          v-model="formData.phone"
       />
-      <div v-if="errors.username" class="error-message">{{ errors.username }}</div>
+      <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
     </div>
     
     <!-- 密码 -->
