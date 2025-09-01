@@ -4,6 +4,16 @@ import { useRouter } from 'vue-router';
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Menu, X } from "lucide-vue-next";
 import { useRoutesStore } from "@/store/routeStore.ts";
+import { useUsersStore } from "@/store/usersStore.ts";
+import { useUserStore } from "@/store/userStore.ts";
+
+// 引入下拉菜单组件
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const routesStore = useRoutesStore();
 const router = useRouter();
@@ -15,6 +25,15 @@ const navigateToRoute = (path: string) => {
 const handleDeleteRouteClick = (id: string, event: Event) => {
   event.stopPropagation();
   routesStore.deleteRoute(id);
+};
+
+const handleLogout = async () => {
+  const usersStore = useUsersStore();
+  usersStore.clearAllUsers(); // 清除所有用户会话数据
+  const userStore = useUserStore();
+  userStore.removeUserInfo(); // 移除当前用户身份信息
+  userStore.removeToken();   // 移除认证token
+  await router.push('/login');
 };
 </script>
 
@@ -32,9 +51,19 @@ const handleDeleteRouteClick = (id: string, event: Event) => {
           <span class="text-lg font-semibold text-gray-800">我的应用</span>
         </div>
         <div class="flex items-center">
-          <button class="text-gray-700 hover:text-blue-600 transition-colors text-lg whitespace-nowrap">
-            用户:admin
-          </button>
+          <!-- 下拉菜单触发器 -->
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <button class="text-gray-700 hover:text-blue-600 transition-colors text-lg whitespace-nowrap px-3 py-1 rounded-md">
+                用户:admin
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem @click="handleLogout" class="cursor-pointer">
+                退出登录
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
@@ -74,12 +103,6 @@ const handleDeleteRouteClick = (id: string, event: Event) => {
 </template>
 
 <style scoped>
-/* 确保 `white-space-nowrap` 在 Tailwind 中可用，或者使用自定义 CSS */
-/* 由于现在每个路由项是一个背景框，不再需要 group 类来控制悬停，
-   而是直接在 .group-item 上定义悬停效果和 .group-item:hover .opacity-0 即可。
-   不过，为了兼容以前的 group-hover 逻辑，我们仍然可以将其命名为 group-item
-   并使用 group-hover。
-*/
 .group-item.relative:hover .opacity-0 {
   opacity: 100;
 }
