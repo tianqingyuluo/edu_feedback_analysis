@@ -1,56 +1,68 @@
 <template>
   <div id="app" class="container mx-auto px-4 py-8">
-    <!-- 表格容器 - 变为一个普通的 div -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      <div class="flex justify-between items-center p-4">
-        <h2 class="text-xl font-semibold text-gray-800">人员管理</h2> <!-- 添加的标题 -->
-        <button
-            @click="handleAddUser"
-            class="px-4 py-2 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
-        >
-          添加人员
-        </button>
+    <!-- 加载状态 -->
+    <div v-if="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <span class="ml-3 text-gray-600">加载中...</span>
+    </div>
+
+    <!-- 错误状态 -->
+    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      <p>加载失败: {{ error }}</p>
+      <button
+          @click="loadUsers"
+          class="mt-2 bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm"
+      >
+        重试
+      </button>
+    </div>
+
+    <!-- 空状态 -->
+    <div v-else-if="!users ||users.length===0" class="bg-white rounded-lg shadow p-8 text-center">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">暂无人员数据</h3>
+      <p class="mt-1 text-gray-500">还没有添加任何人员，请点击下方按钮添加。</p>
+      <div class="mt-6">
+        <AddPersonDialog />
       </div>
-      <!-- 表头 - 使用 div 模拟 -->
+    </div>
+
+    <!-- 正常状态 -->
+    <div v-else class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="flex justify-between items-center p-4">
+        <h2 class="text-xl font-semibold text-gray-800">人员管理</h2>
+        <AddPersonDialog />
+      </div>
+
+      <!-- 表头 -->
       <div class="flex items-center gap-4 px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
-        <!-- 姓名列头 - 占据 20% 宽度 -->
         <div class="w-1/5 text-left py-1">姓名</div>
-
-        <!-- 权限列头 - 占据 20% 宽度 -->
         <div class="w-1/5 text-left py-1">权限</div>
-
-        <!-- 空白列头 - 自动填充剩余空间 (flex-grow) -->
         <div class="flex-grow py-1"></div>
-
-        <!-- 操作列头 - 占据 20% 宽度，左对齐 -->
         <div class="w-1/5 text-left py-1 max-w-[150px]">操作</div>
       </div>
-      <!-- 表体 - 使用 v-for 渲染 div 模拟行 -->
+
+      <!-- 表体 -->
       <div class="divide-y divide-gray-200">
-        <div v-for="(user, index) in users" :key="user.id" class="flex items-center gap-4 px-6 py-4 text-sm text-gray-500 hover:bg-gray-50">
-          <!-- 姓名列 - 占据 20% 宽度 -->
-          <div class="w-1/5 font-medium text-xl text-gray-900">{{ user.name }}</div>
-          <!-- 权限列 - 占据 20% 宽度 -->
-          <div class="w-1/5">{{ user.permission }}</div>
-          <!-- 空白 div - 自动填充剩余空间 (flex-grow) -->
+        <div v-for="user in users" :key="user.id" class="flex items-center gap-4 px-6 py-4 text-sm text-gray-500 hover:bg-gray-50">
+          <div class="w-1/5 font-medium text-xl text-gray-900">{{ user.username }}</div>
+          <div class="w-1/5">
+            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+              {{ user.role === 'OPERATOR' ? '操作员' : '普通用户' }}
+            </span>
+          </div>
           <div class="flex-grow"></div>
-          <!-- 操作按钮 div - 占据 20% 宽度，内容左对齐 -->
           <div class="w-1/5 text-left max-w-[150px]">
-            <!-- 保持 flex 和 flex-wrap，但将 gap 调回 4 或其他更大的值，
-                 并添加 justify-between 尝试将按钮推到两端。 -->
             <div class="flex flex-wrap gap-4 justify-between">
-              <Button
-                  @click="handleManagePermissions(user)"
-                  class="bg-blue-500 text-white text-xs hover:bg-blue-600 transition-colors py-2 px-3 rounded"
-              >
-                管理权限
-              </Button>
-              <Button
-                  @click="handleDeleteUser(user)"
-                  class="bg-red-500 text-white text-xs hover:bg-red-600 transition-colors py-2 px-3 rounded"
-              >
-                删除
-              </Button>
+              <ManagePermissions
+                  :user-id="user.id"
+                  :username="user.username"
+                  :phone="user.phone"
+                  :permission="user.role"
+              />
+              <UserDeleteDialog :user-id="user.id" :username="user.username" />
             </div>
           </div>
         </div>
@@ -60,57 +72,44 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import Button from '@/components/ui/button/Button.vue';
-// 假数据
-const users = ref([
-  { id: 1, name: '张三', permission: '管理员' },
-  { id: 2, name: '李四', permission: '编辑' },
-  { id: 3, name: '王五', permission: '观察者' },
-  { id: 4, name: '赵六', permission: '编辑' },
-  { id: 5, name: '孙七', permission: '管理员' }
-]);
+import { ref, onMounted } from 'vue';
+import { useUsersStore } from '@/store/usersStore.ts';
+import AddPersonDialog from '@/components/layout/AddPersonDialog.vue';
+import ManagePermissions from '@/components/layout/ManagePermissionsDialog.vue';
+import UserDeleteDialog from "@/components/layout/UserDeleteDialog.vue";
 
-// 删除用户处理函数
-const handleDeleteUser = (user) => {
-  console.log('删除用户:', user);
-  // 在实际应用中，这里会调用API进行删除
-  // 这里我们只做前端演示，将用户从列表中移除
-  users.value = users.value.filter(u => u.id !== user.id);
-  alert(`已删除用户: ${user.name}`);
-};
+const usersStore = useUsersStore();
+const users = ref([]);
+const loading = ref(false);
+const error = ref(null);
 
-// 管理权限处理函数
-const handleManagePermissions = (user) => {
-  console.log('管理权限:', user);
-  // 在实际应用中，这里会打开一个模态框或跳转到权限管理页面
-  alert(`管理用户 ${user.name} 的权限`);
-  // 示例：更改用户的权限 (仅为演示，实际应用可能更复杂)
-  const newPermission = prompt(`请为用户 ${user.name} 输入新的权限 (当前: ${user.permission}):`);
-  if (newPermission !== null && newPermission.trim() !== '') {
-    user.permission = newPermission.trim();
-    alert(`用户 ${user.name} 的权限已更新为: ${newPermission.trim()}`);
+// 加载用户数据
+const loadUsers = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    users.value = await usersStore.getAllUsers();
+  } catch (err) {
+    error.value = err.message || '获取用户数据失败';
+    console.error('获取用户数据失败:', err);
+  } finally {
+    loading.value = false;
   }
 };
 
-// 添加人员处理函数
-const handleAddUser = () => {
-  console.log('添加人员');
-  // 在实际应用中，这里会打开一个表单或模态框让用户输入人员信息
-  // 这里我们只是演示，添加一个假的 newUser
-  const newUserName = prompt('请输入新人员的用户名:');
-  if (newUserName !== null && newUserName.trim() !== '') {
-    const newUser = {
-      id: users.value.length ? Math.max(...users.value.map(u => u.id)) + 1 : 1,
-      name: newUserName.trim(),
-      permission: '观察者' // 默认权限
-    };
-    users.value.push(newUser);
-    alert(`已添加新人员: ${newUser.name}`);
-  }
-};
+// 组件创建时加载用户数据
+onMounted(() => {
+  loadUsers();
+});
+
+// 监听 store 变化，实时更新用户列表
+usersStore.$subscribe((mutation, state) => {
+  users.value = [...state.users];
+});
 </script>
 
 <style scoped>
-/* 可以根据需要添加额外的scoped样式 */
+.container {
+  max-width: 1200px;
+}
 </style>

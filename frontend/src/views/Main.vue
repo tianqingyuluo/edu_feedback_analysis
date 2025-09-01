@@ -19,6 +19,7 @@ import TopWrapper from "@/components/layout/topWrapper.vue";
         </div>
       </div>
     </SidebarProvider>
+
   </div>
 </template>
 <style scoped>
