@@ -10,7 +10,6 @@ const userStore = useUserStore();
 // 添加响应拦截器
 instance.interceptors.response.use(
     result => {
-        // 修正：应该 resolve 成功的响应，而不是 reject
         return Promise.resolve(result.data);
     },
     error => {

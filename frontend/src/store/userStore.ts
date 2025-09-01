@@ -5,9 +5,11 @@ export const useUserStore = defineStore('userInfo', () => {
         const userInfo = ref();
         const token = ref();
         const setUserInfo = (newUserInfo) => {
+
             userInfo.value = newUserInfo;
         }
         const setToken = (newToken) => {
+
             token.value = newToken;
         }
         const removeUserInfo = () => {
