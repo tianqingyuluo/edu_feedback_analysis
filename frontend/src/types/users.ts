@@ -1,6 +1,6 @@
 // types/users.ts
 export interface User {
-    id: number;
+    id: string;
     username: string;
     phone: string;
     role: string;
