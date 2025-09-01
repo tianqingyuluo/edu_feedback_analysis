@@ -6,7 +6,7 @@ from app.enum.enums import UserRole
 class UserRead(BaseModel):
     """用户模型"""
     model_config = ConfigDict(from_attributes=True)
-    id: int
+    id: str
     username: str
     phone: str
     role: UserRole
