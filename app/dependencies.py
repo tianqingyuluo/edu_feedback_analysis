@@ -53,6 +53,19 @@ async def get_current_user(
         # 重新抛出认证错误，其他异常将由全局异常处理器处理
         raise AuthenticationError("无法验证令牌")
 
+async def get_current_operator(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """
+    获取当前操作员用户信息的依赖函数
+
+    :param current_user: 当前用户对象
+    :return: 当前操作员用户对象
+    :raises: AuthorizationError: 用户不是操作员
+    """
+    if current_user.role.value != UserRole.OPERATOR.value and current_user.role.value != UserRole.ADMIN.value:
+        raise AuthorizationError("需要操作员或者管理员权限")
+    return current_user
 
 async def get_current_admin_user(
     current_user: User = Depends(get_current_user)
