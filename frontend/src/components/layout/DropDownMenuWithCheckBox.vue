@@ -99,11 +99,6 @@ const selectedMajorsText = computed(() => {
   if (props.modelValue.length === 0) {
     return props.placeholder
   }
-
-  if (props.modelValue.length <= 3) {
-    return props.modelValue.map(major => major.name).join(', ')
-  }
-
   return `已选择 ${props.modelValue.length} 个专业`
 })
 </script>

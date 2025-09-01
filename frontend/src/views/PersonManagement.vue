@@ -50,7 +50,7 @@
           <div class="w-1/5 font-medium text-xl text-gray-900">{{ user.username }}</div>
           <div class="w-1/5">
             <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-              {{ user.role === 'operator' ? '操作员' : '普通用户' }}
+              {{ user.role === 'OPERATOR' ? '操作员' : '普通用户' }}
             </span>
           </div>
           <div class="flex-grow"></div>

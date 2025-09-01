@@ -100,7 +100,7 @@ const onSubmit: SubmissionHandler = async (values, actions) => {
       phone: validatedValues.phone,
       // 如果密码字段为空，不发送 password 属性，让后端决定不更新密码
       password: validatedValues.password ,
-      role: validatedValues.permission
+      role: validatedValues.permission.toUpperCase()
     };
     // 调用 store 的更新方法，传入用户ID和更新数据
     const updatedUser = await userStore.updateUser(props.userId, updateRequest);
@@ -184,10 +184,10 @@ const onSubmit: SubmissionHandler = async (values, actions) => {
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="operator">
+                    <SelectItem value="OPERATOR">
                       操作员 (operator)
                     </SelectItem>
-                    <SelectItem value="user">
+                    <SelectItem value="USER">
                       普通用户 (user)
                     </SelectItem>
                   </SelectGroup>
