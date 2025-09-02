@@ -5,7 +5,7 @@ const baseURL = '/api';
 const instance = axios.create({baseURL});
 import router from "../router/index.js";
 import {useUserStore} from "@/store/userStore.ts";
-const userStore = useUserStore();
+//const userStore = useUserStore();
 
 // 添加响应拦截器
 instance.interceptors.response.use(
@@ -41,10 +41,12 @@ instance.interceptors.response.use(
     }
 );
 
-// 请求拦截器
+
 instance.interceptors.request.use(
     config => {
-        if(userStore.token){config.headers.Authorization=userStore.token;}
+       /* if(userStore.token){
+            config.headers.Authorization = `Bearer ${userStore.token}`;
+        }*/
         return config;
     },
     error => {
