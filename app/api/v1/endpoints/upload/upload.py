@@ -15,6 +15,12 @@ async def upload(
         db: AsyncSession = Depends(get_db_session),
         upload_service: UploadService = Depends(UploadService)
 ):
+    if await upload_service.check_filename_conflict(file.filename, db):
+        return BaseHTTPResponse(
+            http_status=409,
+            message="文件已存在"
+        )
+
     response = await upload_service.upload(
         file=file,
         db=db

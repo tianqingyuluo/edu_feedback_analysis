@@ -7,7 +7,7 @@ snowflake = SnowflakeGenerator(42)
 
 class Upload(SQLModel, table=True):
     id: int = Field(default_factory=lambda:next(snowflake), primary_key=True, sa_type=BIGINT)
-    filename: str = Field(nullable=False)
+    filename: str = Field(nullable=False, unique=True)
     size: int = Field(nullable=False)
     path: str = Field(nullable=False)
     hash: str = Field(nullable=False, unique=True, index=True)
