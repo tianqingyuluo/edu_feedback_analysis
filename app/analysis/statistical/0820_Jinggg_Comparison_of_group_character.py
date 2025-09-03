@@ -65,8 +65,8 @@ radar_dimensions = list(feature_groups.keys())
 
 # 策略1：按学院划分（选择人数最多的4个学院）
 college_counts = df["学院"].value_counts()
-top_colleges = college_counts.head(4).index.tolist()
-college_groups = {college: df[df["学院"] == college] for college in top_colleges}
+colleges = college_counts.index.tolist()
+college_groups = {college: df[df["学院"] == college] for college in colleges}
 
 # 策略2：按学习行为聚类
 learning_behavior_features = [f for f in feature_groups["学习行为"] if f in df.columns]

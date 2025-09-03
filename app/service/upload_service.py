@@ -49,17 +49,56 @@ class UploadService:
                 uploaded_at=upload.uploaded_at,
             )
         except IntegrityError:
+            await db.rollback()
             raise FileConflictError(filename)
 
+    async def check_filename_conflict(self, filename: str, db: AsyncSession) -> bool:
+        """检查文件名是否冲突"""
+        res = await db.execute(select(Upload).where(Upload.filename == filename))
+        upload = res.scalars().first()
+        return upload is not None
+
+    # async def delete(self, id: int, db: AsyncSession) -> bool:
+    #     """删除文件"""
+    #     try:
+    #         upload = await db.get(Upload, id)
+    #         if not upload:
+    #             return False
+    #         await db.delete(upload)
+    #         await db.commit()
+    #         return True
+    #     except Exception:
+    #         return False
     async def delete(self, id: int, db: AsyncSession) -> bool:
         """删除文件"""
         try:
-            upload = await db.get(Upload, id)
+            upload: Upload | None = await db.get(Upload, id)
             if not upload:
                 return False
-            await db.delete(upload)
-            await db.commit()
-            return True
+
+            # 获取文件路径
+            file_path = upload.path
+
+            # 先将文件移动到临时位置，确保可以恢复
+            temp_path = file_path + ".deleting"
+            if os.path.exists(file_path):
+                os.rename(file_path, temp_path)
+
+            try:
+                # 删除数据库记录
+                await db.delete(upload)
+                await db.commit()
+                # 如果数据库删除成功，再永久删除文件
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                return True
+            except Exception:
+                # 如果数据库操作失败，恢复文件
+                await db.rollback()
+                if os.path.exists(temp_path):
+                    os.rename(temp_path, file_path)
+                return False
+
         except Exception:
             return False
 

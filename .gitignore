@@ -80,6 +80,7 @@ Dockerfile.*.bak
 docker-compose.override.yml
 *.spec
 .venv.bak/
+.env.docker
 
 # 文档生成
 _site/

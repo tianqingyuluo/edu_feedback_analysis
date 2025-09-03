@@ -7,5 +7,5 @@ class FileConflictError(UploadException):
     def __init__(self, filename: str):
         super().__init__(
             message=f"文件 {filename} 已存在",
-            error_code="FILE_CONFLICT",
+            error_code="FILE_CONFLICT"
         )
