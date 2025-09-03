@@ -59,7 +59,7 @@ export class UserService {
      * @param userId 用户ID
      * @returns 删除操作结果消息
      */
-    static async deleteUser(userId: number): Promise<string> {
+    static async deleteUser(userId: string): Promise<string> {
         try {
             const response = await request({
                 url: `/admin/user/${userId}`,
@@ -79,7 +79,7 @@ export class UserService {
      * @param userData 更新的用户数据
      * @returns 更新后的用户信息
      */
-    static async updateUser(userId: number, userData: UpdateUserRequest): Promise<UpdateUserResponse> {
+    static async updateUser(userId: string, userData: UpdateUserRequest): Promise<UpdateUserResponse> {
         try {
             const response = await request({
                 url: `admin/user/${userId}`,
