@@ -151,6 +151,10 @@ const updateRadarChart = () => {
       indicator: radarIndicators.value,
       radius: '70%',
       center: ['50%', '50%'],
+      axisName: {
+        color: '#000000', 
+        fontSize: 12
+      },
       axisLine: {
         lineStyle: {
           color: 'rgba(211, 253, 250, 0.8)'
