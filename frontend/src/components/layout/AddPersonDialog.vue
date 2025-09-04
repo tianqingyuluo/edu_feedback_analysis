@@ -48,7 +48,7 @@ const rawPersonSchema = z.object({
       .nonempty("手机号不能为空"),
   password: z
       .string()
-      .min(6, "密码最少6个字符")
+      .min(8, "密码最少8个字符")
       .max(20, "密码最多20个字符")
       .nonempty("密码不能为空"),
 });

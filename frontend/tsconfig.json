@@ -1,6 +1,11 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "components/ui/**/*.ts"
+  ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
@@ -9,6 +14,6 @@
       "@/*": ["./src/*"]
     },
     "strict": false,
-    "noImplicitAny": false,
+    "noImplicitAny": false
   }
 }

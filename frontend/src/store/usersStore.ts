@@ -44,7 +44,7 @@ export const useUsersStore = defineStore('users', {
             }
         },
 
-        async deleteUser(userId: number) {
+        async deleteUser(userId: string) {
             this.loading = true;
             this.error = null;
             try {
@@ -61,7 +61,7 @@ export const useUsersStore = defineStore('users', {
             }
         },
 
-        async updateUser(userId: number, updates: UpdateUserRequest) {
+        async updateUser(userId: string, updates: UpdateUserRequest) {
             this.loading = true;
             this.error = null;
             try {

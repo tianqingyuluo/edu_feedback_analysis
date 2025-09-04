@@ -3,7 +3,7 @@
 import { ref, watch, onMounted } from 'vue'
 import DropDownMenuWithCheckBox from '@/components/layout/DropDownMenuWithCheckBox.vue'
 import { Button } from '@/components/ui/button'
-import { defaultAcademyData, type Academy, type Major } from '@/types/majorModels.ts'
+import { type Academy, type Major } from '@/types/majorModels.ts'
 
 /* ---------- 年级选项 ---------- */
 interface GradeOption { value: string; label: string }
@@ -16,8 +16,9 @@ const gradeOptions: GradeOption[] = [
 
 /* ---------- 响应式数据 ---------- */
 const selectedAcademicsAndMajors = ref<Major[]>([])
-const selectedGrade = ref<string[]>([])
-const academies = ref<Academy[]>([])   // ① 先留空
+const selectedGrade = ref<string>('')   // ✅ 改成 string 类型
+
+const academies = ref<Academy[]>([])
 
 /* ---------- emit ---------- */
 const emit = defineEmits<{
@@ -28,24 +29,26 @@ const emit = defineEmits<{
 
 /* ---------- 监听 & 自动 apply ---------- */
 watch(selectedAcademicsAndMajors, (v) => { emit('update:selectedMajors', v); emit('apply-filters') }, { deep: true })
-watch(selectedGrade, (v) => { emit('update:selectedGrade', v); emit('apply-filters') }, { deep: true })
+watch(selectedGrade, (v) => {                                // ✅ 监听 string
+  emit('update:selectedGrade', v ? [v] : [])                // 保持对外仍为 string[]
+  emit('apply-filters')
+})
 
 /* ---------- 年级下拉 ---------- */
 const handleGradeChange = (e: Event) => {
   const t = e.target as HTMLSelectElement
-  selectedGrade.value = t.value && t.value !== 'all' ? [t.value] : []
+  selectedGrade.value = t.value !== 'all' ? t.value : ''     // ✅ 直接赋 string
 }
 
 /* ---------- 清空 ---------- */
 const clearAllFilters = () => {
   selectedAcademicsAndMajors.value = []
-  selectedGrade.value = []
+  selectedGrade.value = ''
   emit('apply-filters')
 }
 
 /* ---------- 构造数据 ---------- */
 onMounted(() => {
-  // 1. 生成「全校整体」专业
   const gradeSet = new Set<string>()
   defaultAcademyData.forEach(ac =>
       ac.majors[0].grades.forEach(g => gradeSet.add(g.name))
@@ -72,7 +75,6 @@ onMounted(() => {
     })
   }
 
-  // 2. 生成「XX学院整体」专业 & 插入对应学院
   const processed: Academy[] = defaultAcademyData.map(ac => {
     const overall: Major = {
       name: `${ac.name}整体`,
@@ -94,7 +96,6 @@ onMounted(() => {
     return { ...ac, majors: [overall, ...ac.majors] }
   })
 
-  // 3. 学校整体学院放最前
   academies.value = [
     { name: '学校整体', majors: [wholeSchoolMajor] },
     ...processed
@@ -116,8 +117,9 @@ onMounted(() => {
 
     <div class="filter-group">
       <label class="block text-sm font-medium text-gray-700 mb-1">年级</label>
+      <!-- ✅ 单选 select，直接绑定 string -->
       <select
-          :value="selectedGrade.length ? selectedGrade[0] : 'all'"
+          :value="selectedGrade || 'all'"
           @change="handleGradeChange"
           class="block w-[150px] pl-3 pr-8 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       >

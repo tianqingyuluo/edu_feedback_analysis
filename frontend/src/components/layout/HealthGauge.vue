@@ -5,6 +5,7 @@ import * as echarts from 'echarts'
 const props = defineProps<{
   ehiValue: number; // 0-100
   title?: string;
+  MetricName:string;
 }>();
 const gaugeChartRef = ref<HTMLElement | null>(null);
 let gaugeChartInstance: echarts.ECharts | null = null;
@@ -87,7 +88,7 @@ const updateGaugeChart = () => {
         data: [
           {
             value: props.ehiValue, // Bind to the prop here
-            name: 'EHI'
+            name: props.MetricName
           }
         ],
         title: {
