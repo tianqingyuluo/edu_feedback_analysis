@@ -27,7 +27,6 @@ const deletingId = ref<number | null>(null)
 
 // 上传相关
 const uploadRef = ref<UploadInstance>()
-const showSuccessDialog = ref(false)
 const uploadedFileName = ref('')
 
 // 获取历史记录（失败时使用模拟数据）
@@ -37,16 +36,14 @@ const fetchHistory = async () => {
     const res = await getUploadHistory(currentPage.value, pageSize.value)
     
     // ✅ 适配后端结构：{ http_status: 0, message: { total, items } }
-    if (res.http_status === 0 && res.message?.items) {
+    if (res.http_status === 200 && res.message?.items) {
       const data = res.message
       historyList.value = data.items
       total.value = data.total
-      console.log('✅ 使用真实数据')
     } else {
       throw new Error('Invalid response format')
     }
   } catch (error) {
-    console.warn('⚠️ 获取数据失败，正在使用模拟数据...', error)
     ElMessage.warning('无法连接服务器，已加载示例数据')
     
     // 使用模拟数据并模拟分页
@@ -94,10 +91,8 @@ const customUpload: UploadProps['httpRequest'] = async (options) => {
   const { file, onSuccess, onError } = options
   const formData = new FormData()
   formData.append('file', file)
-  
   try {
     const response = await uploadExcel(formData)
-    onSuccess(response.data)
   } catch (err) {
     onError(err as any)
   }
@@ -106,7 +101,6 @@ const customUpload: UploadProps['httpRequest'] = async (options) => {
 // 上传成功回调
 const handleUploadSuccess = (response: any, file: File) => {
   uploadedFileName.value = file.name
-  showSuccessDialog.value = true
   setTimeout(() => {
     fetchHistory() // 刷新列表
   }, 800)
@@ -116,21 +110,26 @@ const handleUploadSuccess = (response: any, file: File) => {
 // 删除文件
 const handleDelete = async (id: number) => {
   try {
+    // 使用 await 等待用户操作结果
     await ElMessageBox.confirm('确定要删除该文件吗？此操作不可恢复', '⚠️ 删除确认', {
       confirmButtonText: '删除',
       cancelButtonText: '取消',
       type: 'warning'
     })
     
+    // 用户点击了确认按钮
     deletingId.value = id
     await deleteExcelById(id)
     ElMessage.success('删除成功')
     fetchHistory() // 刷新
   } catch (error: any) {
-    if (error?.__CANCEL__) {
+    // 明确区分取消操作和错误情况
+    if (error === 'cancel') {
       ElMessage.info('已取消删除')
     } else {
+      // 其他错误情况（网络错误、删除失败等）
       ElMessage.error('删除失败')
+      console.error('删除操作出错:', error)
     }
   } finally {
     deletingId.value = null
@@ -237,12 +236,6 @@ onMounted(() => {
       />
     </div>
   </div>
-  
-  <!-- 提示对话框 -->
-  <el-dialog v-model="showSuccessDialog" title="✅ 上传成功" width="30%">
-    <p>文件 <strong>{{ uploadedFileName }}</strong> 上传成功！</p>
-    <p>正在刷新列表...</p>
-  </el-dialog>
 </div>
 </template>
 

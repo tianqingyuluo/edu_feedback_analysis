@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import ImgIndex from '@/Test/Index.vue'
 import ExcelManagement from './views/ExcelManagement.vue';
+import EHI from './views/EHI.vue';
+import RPI from './views/RPI.vue';
 </script>
 
 <template>
@@ -9,5 +11,7 @@ import ExcelManagement from './views/ExcelManagement.vue';
 <!--    <ImgIndex/>-->
 <!--    <ExcelManagement/>-->
     <router-view/>
+<!--    <EHI/>-->
+<!--    <RPI/>-->
   </div>
 </template>
