@@ -81,11 +81,3 @@ class RPIProcessor:
             if majors_json:
                 academies_json.append({'name': ac_name, 'majors': majors_json})
         return academies_json
-
-
-# ---------- 快速测试 ----------
-if __name__ == '__main__':
-    df = pd.read_csv('D:\python\edu_feedback_analysis\data\intermediate\初步清洗_比赛数据_2.csv')
-    result = RPIProcessor.process_dataframe_to_json(df)
-    print(f'生成 {len(result)} 个学院数据')
-    print(result)

@@ -184,39 +184,3 @@ class DataProcessor:
 
         return academies_data
 
-
-if __name__ == "__main__":
-    """测试DataProcessor类"""
-    import pandas as pd
-    from pathlib import Path
-
-
-    def test_processor():
-        try:
-            # 1. 读取真实数据
-            print("正在读取数据文件...")
-            data_path = Path('../../../data/intermediate/初步清洗_比赛数据_2.csv')
-
-            if not data_path.exists():
-                print(f"错误：数据文件不存在！路径: {data_path.absolute()}")
-                return None
-
-            df = pd.read_csv(data_path)
-            print(f"数据读取成功！共 {len(df)} 行，{len(df.columns)} 列")
-
-            # 2. 使用计算权重处理数据
-            print("\n开始使用相关性权重处理数据...")
-            result_data = DataProcessor.process_dataframe_to_json(df)
-
-            print(f"\n处理完成！返回 {len(result_data)} 个学院的数据")
-            return result_data
-
-        except Exception as e:
-            print(f"处理过程中出现错误: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            return None
-
-
-    # 运行测试
-    result = test_processor()

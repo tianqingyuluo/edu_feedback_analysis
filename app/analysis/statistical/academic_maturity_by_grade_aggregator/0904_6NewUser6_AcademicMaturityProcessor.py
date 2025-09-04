@@ -1,7 +1,7 @@
 # AcademicMaturityProcessor.py
 import pandas as pd
 from typing import List, Dict, Any
-
+import numpy as np
 # ========== 1. 一级分组 & 二级指标 ==========
 GROUPS = {
     "学习行为": [
@@ -61,7 +61,3 @@ def process_maturity_to_json(df: pd.DataFrame) -> List[Dict[str, Any]]:
     return result
 
 
-# ========== 3. 快速测试 ==========
-if __name__ == "__main__":
-    df = pd.read_csv('D:\python\edu_feedback_analysis\data\intermediate\初步清洗_比赛数据_2.csv')
-    print(process_maturity_to_json(df))
