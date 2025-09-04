@@ -4,7 +4,7 @@ import request from '../utils/request';
 // 上传Excel文件
 export const uploadExcel = (dataForm: FormData) => {
     return request({
-        url: '/upload',
+        url: '/upload/',
         method: 'post',
         data: dataForm,
         headers: {

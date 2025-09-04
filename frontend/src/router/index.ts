@@ -15,6 +15,7 @@ const PersonManagement = () => import('@/views/PersonManagement.vue')
 // const Data = () => import('@/views/Data.vue')
 // const Analysis = () => import('@/views/Analysis.vue')
 // const Chat = () => import('@/views/Chat.vue')
+const ExcelManagement = () => import('@/views/ExcelManagement.vue')
 
 const Login=()=>import('@/login/Index.vue')
 
@@ -42,6 +43,7 @@ const routes = [
         ]
     },
     {path: '/login', name: 'Login', component: Login},
+    { path: '/excel-management', name: 'ExcelManagement', component: ExcelManagement },
 ]
 
 const router = createRouter({

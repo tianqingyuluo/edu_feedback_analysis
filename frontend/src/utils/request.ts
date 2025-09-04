@@ -1,11 +1,10 @@
 // request.js
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-const baseURL = '/api';
+const baseURL = 'https://fiyingngextq.sealoshzh.site/api/v1';
 const instance = axios.create({baseURL});
 import router from "../router/index.js";
 import {useUserStore} from "@/store/userStore.ts";
-//const userStore = useUserStore();
 
 // 添加响应拦截器
 instance.interceptors.response.use(
@@ -44,9 +43,10 @@ instance.interceptors.response.use(
 
 instance.interceptors.request.use(
     config => {
-       /* if(userStore.token){
+        const userStore = useUserStore();
+        if(userStore.token){
             config.headers.Authorization = `Bearer ${userStore.token}`;
-        }*/
+        }
         return config;
     },
     error => {
