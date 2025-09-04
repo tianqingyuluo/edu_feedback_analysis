@@ -85,7 +85,7 @@ onMounted(() => {
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div class="md:col-span-1">
-        <HealthGauge :ehi-value="calculatedEHI" />
+        <HealthGauge :ehi-value="calculatedEHI" MetricName="EHI"/>
       </div>
       <div class="md:col-span-2">
         <RadarChart

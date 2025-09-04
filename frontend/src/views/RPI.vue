@@ -73,7 +73,7 @@ onMounted(() => calculateEHI())
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
       <!-- 左侧仪表盘 -->
       <div>
-        <HealthGauge :ehi-value="ehiValue" title="资源满意度总览" />
+        <HealthGauge :ehi-value="ehiValue" title="资源满意度总览" MetricName="RPI" />
       </div>
 
       <!-- 右侧雷达图 -->
