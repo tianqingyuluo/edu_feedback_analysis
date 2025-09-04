@@ -38,3 +38,56 @@ class ModelVersionManager:
         if not versions:
             return 1
         return max(versions) + 1
+
+    def get_model_path(self, model_name, version=None):
+        """获取模型文件路径"""
+        if version is None:
+            # 获取最新版本
+            versions = []
+            prefix = f"{model_name}_v"
+            
+            # 遍历目录中的所有文件
+            for file_path in self.model_dir.glob(f"{prefix}*.pkl"):
+                file_name = file_path.name
+                # 提取版本号
+                if "_" in file_name:
+                    parts = file_name.split("_")
+                    if len(parts) >= 2 and parts[1].startswith("v"):
+                        try:
+                            version_num = int(parts[1][1:])  # 去掉'v'前缀
+                            versions.append((version_num, file_path))
+                        except ValueError:
+                            continue
+            
+            if not versions:
+                raise FileNotFoundError(f"No model files found for {model_name}")
+            
+            # 返回最高版本的文件路径
+            latest_version_path = max(versions, key=lambda x: x[0])[1]
+            return latest_version_path
+        else:
+            # 获取指定版本
+            model_file = self.model_dir / f"{model_name}_v{version}.pkl"
+            if not model_file.exists():
+                raise FileNotFoundError(f"Model file not found: {model_file}")
+            return model_file
+
+    def list_model_versions(self, model_name):
+        """列出模型的所有版本"""
+        versions = []
+        prefix = f"{model_name}_v"
+        
+        # 遍历目录中的所有文件
+        for file_path in self.model_dir.glob(f"{prefix}*.pkl"):
+            file_name = file_path.name
+            # 提取版本号
+            if "_" in file_name:
+                parts = file_name.split("_")
+                if len(parts) >= 2 and parts[1].startswith("v"):
+                    try:
+                        version_num = int(parts[1][1:])  # 去掉'v'前缀
+                        versions.append(version_num)
+                    except ValueError:
+                        continue
+        
+        return sorted(versions)

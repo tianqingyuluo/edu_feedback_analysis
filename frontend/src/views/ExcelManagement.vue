@@ -166,7 +166,7 @@ onMounted(() => {
 
 <template>
 <div class="excel-manager-container">
-  <h2 class="title">📊 Excel 文件管理</h2>
+  <h2 class="title"> Excel 文件管理</h2>
   
   <!-- 上传区域 -->
   <div class="upload-section">
@@ -179,7 +179,7 @@ onMounted(() => {
         :http-request="customUpload"
         accept=".xls,.xlsx,.csv"
     >
-      <el-button type="primary" size="large" icon="Upload">上传 Excel 文件</el-button>
+      <el-button type="primary" size="large" class="upload-button">上传 Excel 文件</el-button>
       <template #tip>
         <div class="el-upload__tip">
           支持格式：.xls, .xlsx, .csv，单文件不超过 10MB

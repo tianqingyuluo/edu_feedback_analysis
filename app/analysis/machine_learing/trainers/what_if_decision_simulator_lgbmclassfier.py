@@ -1,9 +1,6 @@
 import asyncio
 import pickle
 from concurrent.futures.thread import ThreadPoolExecutor
-from multiprocessing.pool import ThreadPool
-
-import aiofiles
 from lightgbm import LGBMClassifier
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
 import pandas as pd
