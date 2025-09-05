@@ -46,7 +46,7 @@ const navigateTo = (item: { path: string; name: string }) => {
 </script>
 
 <template>
-  <Sidebar collapsible="offcanvas" class="bg-white border-r border-gray-200">
+  <Sidebar collapsible="offcanvas" class="bg-white border-r border-gray-200 max-w-[192px]">
     <SidebarContent>
       <SidebarGroup class="p-0">
         <SidebarMenu class="space-y-1">
@@ -66,7 +66,7 @@ const navigateTo = (item: { path: string; name: string }) => {
           >
             <router-link
                 :to="item.path"
-                class="sidebar-link block py-2 text-xl rounded-none pl-8"
+                class="sidebar-link block py-2 text-[18px] rounded-none pl-8"
                 :class="{
                     'text-blue-600': isActiveTab(item.path),
                     'text-gray-900': !isActiveTab(item.path)
