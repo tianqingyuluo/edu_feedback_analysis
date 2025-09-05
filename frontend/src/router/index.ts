@@ -15,7 +15,7 @@ const ExcelManagement = () => import('@/views/ExcelManagement.vue')
 // const Data = () => import('@/views/Data.vue')
 // const Analysis = () => import('@/views/Analysis.vue')
 // const Chat = () => import('@/views/Chat.vue')
-const ExcelManagement = () => import('@/views/ExcelManagement.vue')
+
 
 const Login=()=>import('@/login/Index.vue')
 

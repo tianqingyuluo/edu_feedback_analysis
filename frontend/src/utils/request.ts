@@ -1,7 +1,7 @@
 // request.js
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-const baseURL = 'https://fiyingngextq.sealoshzh.site/api/v1';
+const baseURL = '/api';
 const instance = axios.create({baseURL});
 import router from "../router/index.js";
 import {useUserStore} from "@/store/userStore.ts";
