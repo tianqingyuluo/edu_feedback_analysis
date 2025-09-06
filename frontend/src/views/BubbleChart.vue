@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick,inject } from 'vue'
 import * as echarts from 'echarts'
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import BubbleMetricDropdown from '@/components/layout/BubbleMetricDropdown.vue'
 import type { Metric, MetricGroup } from '@/types/Metric.ts'
-import academiesData from './academies_data.json'
 
-const metricGroups = ref<MetricGroup[]>(academiesData as MetricGroup[])
+const metricGroups = inject<MetricGroup[]>('bubbleData', [])
 const selectedMetrics = ref<Metric[]>([])
 
 const chartRef = ref<HTMLElement | null>(null)
