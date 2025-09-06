@@ -35,23 +35,24 @@ import {buildTimeAcademies} from "@/utils/buildTimeData.ts";
 
 const route = useRoute()
 const reportId = ref<string>(route.params.reportId as string)
-
+//加一个图就往ChartName后加一个阻断
 type ChartName = 'EHI' | 'RPI' | 'Bubble' | 'Metric' | 'pie'
-const activeChart = ref<ChartName>('EHI')
-
+const activeChart = ref<ChartName>('EHI')//决定现在选择哪个页
+//数据都写在一起，导入类型，确保类型正确
 /* ---------- 数据 ---------- */
 const academies      = ref<Academy[]>([])
 const rpiAcademies   = ref<Academy[]>([])
 const bubbleData     = ref<MetricGroup[]>([])   // 气泡图专用
 const trendData      = ref<MetricGroup[]>([]) // 趋势图专用
 const rawTimeData = ref<Academy[]>([])//饼图专用
-
+//后续组件都最为这个组件的下游组件，这个组件统一 provide，下游组件通过inject接受
 /* ---------- 统一 provide ---------- */
 provide('academies',      academies)
 provide('rpiAcademies',   rpiAcademies)
 provide('bubbleData',     bubbleData)   // 气泡图
 provide('trendData',      trendData)    // 趋势图
 provide('timeAcademies',  rawTimeData)//饼图
+//下面是拉数据的函数，目前逻辑不正确，将假数据贴进去即可，后续会正确返回后端数据
 /* ---------- 一次性拉数据 ---------- */
 onMounted(async () => {
   // 1. 基础学院数据
