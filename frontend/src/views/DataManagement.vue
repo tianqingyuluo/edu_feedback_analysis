@@ -4,13 +4,15 @@ import { useUploadStore } from '@/store/uploadStore'
 import { Button } from '@/components/ui/button'
 import { onMounted, ref } from 'vue'
 import { Progress } from '@/components/ui/progress'
-
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import {useRoutesStore} from "@/store/routeStore.ts";
+const router = useRouter()
 /* ---------- store ---------- */
 const store = useUploadStore()
+const routeStore = useRoutesStore()
 const { items, total, page, size, loading, error, analyzedList } = storeToRefs(store)
 
-/* 单选：当前选中的 id */
-const selectedId = ref<String | null>(null)
 
 /* 分页 */
 function prev() {
@@ -25,9 +27,22 @@ async function handleAnalyze(id: string) {
   await store.startAnalyze(id)
 }
 /* 查看按钮 */
-function handleSelect(id: string) {
-  selectedId.value = id
-  console.log('当前选中 id:', selectedId.value)
+function handleSelect(dataId: string) {
+  const taskId = store.getTaskIdByDataId(dataId)
+  if (!taskId) {
+    ElMessage.warning('暂无对应的分析任务')
+    return
+  }
+
+  const row = store.items.find(it => it.id === dataId)
+  if (!row) return
+
+  const routeName = row.filename.replace(/\.[^.]+$/, '')
+  const routePath = `/admin/report/${taskId}`
+
+  routeStore.addRoute(routePath, routeName)
+
+  router.push({ name: 'ReportShow', params: { reportId: taskId } })
 }
 
 /* 首次加载 */

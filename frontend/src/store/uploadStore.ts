@@ -47,6 +47,7 @@ export const useUploadStore = defineStore('upload', () => {
             page.value  = message.page
             size.value  = message.size
         }catch {
+
             /* ===== 兜底：带状态的假数据 ===== */
             const mockTotal = 33
             const start = (p - 1) * s
@@ -65,7 +66,12 @@ export const useUploadStore = defineStore('upload', () => {
                     Math.floor(Math.random() * 3)
                     ]
             })) as UploadItem[]
-
+            analyzedList.value = rawMock.map((it, idx) => ({
+                task_id: `fake-task-${it.id}`,
+                data_id: String(it.id),
+                status: TaskStatus.COMPLETED,
+                progress: 100,
+            }))
             total.value = mockTotal
             page.value  = p
             size.value  = s
@@ -132,7 +138,9 @@ export const useUploadStore = defineStore('upload', () => {
             console.error('启动分析失败', e)
         }
         }
-    return { items, total, page, size, loading, error, fetchPage, changePage,analyzedList,startAnalyze }},
+        const getTaskIdByDataId = (dataId: string): string | undefined =>
+            analyzedList.value.find(a => a.data_id === dataId)?.task_id
+    return { items, total, page, size, loading, error, fetchPage, changePage,analyzedList,startAnalyze,getTaskIdByDataId }},
     {
         persist: true
     })
