@@ -17,7 +17,7 @@ const gradeOptions: GradeOption[] = [
 /* ---------- 响应式数据 ---------- */
 const selectedAcademicsAndMajors = ref<Major[]>([])
 const selectedGrade = ref<string[]>([])
-const academies = inject<Academy[]>('academies', [])
+const academies = inject<Academy[]>('rpiAcademies', [])
 
 /* ---------- emit ---------- */
 const emit = defineEmits<{

@@ -1,4 +1,5 @@
 import request from '../utils/request';
+import type {UploadHistoryResp} from "@/types/analysis.ts";
 
 
 // 上传Excel文件
@@ -14,7 +15,7 @@ export const uploadExcel = (dataForm: FormData) => {
 }
 
 // 获取上传历史记录，分页
-export const getUploadHistory = (page: number, size: number) => {
+export const getUploadHistory = (page: number, size: number):Promise<UploadHistoryResp> => {
     return request({
         url: `/upload/history/${page}/${size}`,
         method: 'get'

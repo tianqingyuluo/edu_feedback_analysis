@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick,inject } from 'vue'
 import * as echarts from 'echarts'
 import MetricDropdown from '@/components/layout/MetricDropdown.vue'
 import { Button } from '@/components/ui/button'
-import { defaultMetricData, type Metric } from '@/types/Metric.ts'
+import { type Metric } from '@/types/Metric.ts'
 import {DropdownMenu} from "@/components/ui/dropdown-menu";
 
-const metricGroups = ref(defaultMetricData)
+const metricGroups = inject<Metric[]>('trendData', [])  // 统一数据源
 const selectedMetrics = ref<Metric[]>([])
 
 const chartRef = ref<HTMLElement | null>(null)

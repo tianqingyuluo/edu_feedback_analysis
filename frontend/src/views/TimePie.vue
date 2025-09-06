@@ -1,76 +1,26 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue'
+import { ref, inject, watchEffect, computed } from 'vue'
 import * as echarts from 'echarts'
 import { Button } from '@/components/ui/button'
 import type { Academy, Major } from '@/types/majorModels'
-import rawData from './compact_time_data.json'
 import SingleSelectMenu from '@/components/layout/SingleSelectMenu.vue'
 
 /* ---------- 年级 ---------- */
 const gradeOptions = ['大一', '大二', '大三', '大四']
 const selectedGrade = ref<string>('大一')
-
-/* ---------- 学院/专业构造 ---------- */
-const academies = computed<Academy[]>(() => {
-  const grade = selectedGrade.value
-  const list: Academy[] = []
-
-  /* 1. 全校整体 */
-  const allData: number[][] = []
-  for (const ac of rawData) {
-    for (const m of ac.majors) {
-      const g = m.grades.find(gr => gr.name === grade)
-      if (g) allData.push(g.data)
-    }
-  }
-  const wholeData = allData[0]?.map((_, i) =>
-      allData.reduce((sum, arr) => sum + (arr[i] ?? 0), 0) / allData.length
-  ) ?? []
-  list.push({
-    name: '学校整体',
-    majors: [{ name: '学校整体', grades: [{ name: grade, data: wholeData }] }]
-  })
-
-  /* 2. 各学院 + 本学院整体 + 各专业 */
-  for (const ac of rawData) {
-    const majorList: Major[] = []
-
-    /* 2.1 本学院整体 */
-    const collegeData: number[][] = []
-    for (const m of ac.majors) {
-      const g = m.grades.find(gr => gr.name === grade)
-      if (g) collegeData.push(g.data)
-    }
-    const collegeAvg = collegeData[0]?.map((_, i) =>
-        collegeData.reduce((sum, arr) => sum + (arr[i] ?? 0), 0) / collegeData.length
-    ) ?? []
-    majorList.push({
-      name: `${ac.name.trim()}整体`,
-      grades: [{ name: grade, data: collegeAvg }]
-    })
-
-    /* 2.2 各专业 */
-    for (const m of ac.majors) {
-      const g = m.grades.find(gr => gr.name === grade)
-      if (g) {
-        majorList.push({
-          name: m.name.trim(),
-          grades: [{ name: grade, data: g.data }]
-        })
-      }
-    }
-
-    list.push({
-      name: ac.name.trim(),
-      majors: majorList
-    })
-  }
-
-  return list
-})
+const academies = inject<Academy[]>('timeAcademies', [])
 
 /* ---------- 专业单选 ---------- */
 const selectedMajor = ref<Major | null>(null)
+
+/* ---------- 计算当前选中年级的数据 ---------- */
+const currentGradeData = computed(() => {
+  if (!selectedMajor.value) return []
+
+  // 找到当前选中年级的数据
+  const gradeData = selectedMajor.value.grades.find(g => g.name === selectedGrade.value)
+  return gradeData?.data || []
+})
 
 /* ---------- 清除 ---------- */
 const clearAll = () => {
@@ -89,9 +39,15 @@ const labels = ['学习', '科研', '竞赛', '实践', '实习', '志愿', '社
 watchEffect(() => {
   if (!chartRef.value) return
   if (!chart) chart = echarts.init(chartRef.value)
-  const data = selectedMajor.value?.grades[0]?.data ?? []
+
+  const data = currentGradeData.value
   chart.setOption({
-    title: { text: selectedMajor.value?.name || '', left: 'center' },
+    title: {
+      text: selectedMajor.value?.name || '',
+      left: 'center',
+      subtext: selectedMajor.value ? `${selectedGrade.value}数据` : '',
+      subtextStyle: { fontSize: 14 }
+    },
     tooltip: { trigger: 'item' },
     legend: { orient: 'vertical', left: 'left' },
     series: [
@@ -147,6 +103,10 @@ watchEffect(() => {
     <!-- 饼图白色卡片 -->
     <div class="bg-white rounded-lg shadow-sm p-6">
       <div ref="chartRef" class="w-full h-[400px]"></div>
+      <!-- 添加数据提示 -->
+      <div v-if="selectedMajor && currentGradeData.length === 0" class="text-center text-gray-500 mt-4">
+        该专业没有 {{ selectedGrade }} 的数据
+      </div>
     </div>
   </div>
 </template>

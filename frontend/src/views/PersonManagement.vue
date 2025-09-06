@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container mx-auto px-4 py-8">
+  <div id="app" class="w-full px-4 py-8">
     <!-- 加载状态 -->
     <div v-if="loading" class="flex justify-center items-center h-64">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -109,7 +109,4 @@ usersStore.$subscribe((mutation, state) => {
 </script>
 
 <style scoped>
-.container {
-  max-width: 1200px;
-}
 </style>
