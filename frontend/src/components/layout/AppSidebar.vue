@@ -12,13 +12,10 @@ import { useRoutesStore } from '@/store/routeStore.ts';
 import type { AppRoute } from '@/store/routeStore.ts'; // 导入 AppRoute 类型以供使用
 
 const navItems = [
-  { name: "概览", path: "/home" },
-  { name: "教学质量", path: "/teaching-quality" },
-  { name: "学生满意度", path: "/student-satisfaction" },
-  { name: "课程评估", path: "/course-evaluation" },
-  { name: "教师评价", path: "/teacher-evaluation" },
-  { name: "数据管理", path: "/data-management" },
-  { name: "系统设置", path: "/system-settings" }
+  { name: '数据管理', path: '/admin/data-hub' },
+  { name: '人员管理', path: '/admin/user-mgmt' },
+  { name: '分析管理', path: '/admin/analytics' },
+  { name: 'AI 对话', path: '/admin/ai-chat' },
 ];
 
 const route = useRoute();
