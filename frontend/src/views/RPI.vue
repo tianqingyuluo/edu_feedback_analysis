@@ -1,11 +1,12 @@
 <!-- pages/ResourceHeatmapPage.vue -->
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import FiltersBar from '@/components/layout/gradeFilter.vue'
+import FiltersBar from '@/components/layout/RPIGradeFilter.vue'
 import HealthGauge from '@/components/layout/HealthGauge.vue'
 import RadarChart from '@/components/layout/RadarChart.vue'
 import ResourceHeatmap from '@/components/layout/ResourceHeatmap.vue'
 import type { Major } from '@/types/majorModels.ts'
+import RPIGradeFilter from "@/components/layout/RPIGradeFilter.vue";
 
 const selectedMajors = ref<Major[]>([])
 const selectedGrade = ref<string[]>([])
@@ -57,42 +58,43 @@ onMounted(() => calculateEHI())
 </script>
 
 <template>
-  <div class="p-6 bg-gray-50 min-h-screen">
-    <h1 class="text-2xl font-bold mb-4">资源满意度分析页面</h1>
+  <div class="dashboard-layout p-6 bg-gray-100 min-h-screen">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">
+      学生资源感知度仪表盘
+    </h1>
 
-    <!-- 筛选栏 -->
-    <div class="sticky top-0 z-50 bg-white shadow-lg rounded-b-lg">
-      <FiltersBar
-          v-model:selectedMajors="selectedMajors"
-          v-model:selectedGrade="selectedGrade"
-          @apply-filters="calculateEHI"
-      />
-    </div>
+    <RPIGradeFilter
+        v-model:selectedMajors="selectedMajors"
+        v-model:selectedGrade="selectedGrade"
+        @apply-filters="calculateEHI"
+        class="sticky top-0 z-10 bg-white/90 backdrop-blur px-6 py-4 shadow-sm mb-6"
+    />
 
-    <!-- 第一行：仪表盘 | 雷达图 -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-      <!-- 左侧仪表盘 -->
-      <div>
-        <HealthGauge :ehi-value="ehiValue" title="资源满意度总览" MetricName="RPI" />
+    <!-- 2. 仪表盘 | 雷达图 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="md:col-span-1">
+        <HealthGauge
+            :ehi-value="ehiValue"
+            MetricName="RPI"
+            title="综合资源感知度 (RPI)"
+        />
       </div>
-
-      <!-- 右侧雷达图 -->
-      <div>
+      <div class="md:col-span-2">
         <RadarChart
             :selected-majors-for-radar="selectedMajors"
             :selected-grades-for-radar="selectedGrade"
-            title="资源维度雷达图"
             :indicators="radarIndicators"
+            title="综合资源感知度 (RPI)"
         />
       </div>
     </div>
 
-    <!-- 第二行：热力图独占整宽并自适应高度 -->
-    <div class="mt-6">
+    <!-- 3. 热力图 -->
+    <div class="mt-6 bg-white rounded-lg shadow p-4">
       <ResourceHeatmap
           :selected-majors="selectedMajors"
           :selected-grade="selectedGrade"
-          class="w-full h-auto min-h-[500px] lg:min-h-[600px]"
+          class="w-full min-h-[800px]"
       />
     </div>
   </div>
