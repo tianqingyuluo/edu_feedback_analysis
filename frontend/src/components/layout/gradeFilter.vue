@@ -1,9 +1,9 @@
 <!-- components/FiltersBar.vue -->
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, inject} from 'vue'
 import DropDownMenuWithCheckBox from '@/components/layout/DropDownMenuWithCheckBox.vue'
 import { Button } from '@/components/ui/button'
-import { defaultAcademyData, type Academy, type Major } from '@/types/majorModels.ts'
+import {type Academy, type Major } from '@/types/majorModels.ts'
 
 /* ---------- 年级选项 ---------- */
 interface GradeOption { value: string; label: string }
@@ -17,7 +17,7 @@ const gradeOptions: GradeOption[] = [
 /* ---------- 响应式数据 ---------- */
 const selectedAcademicsAndMajors = ref<Major[]>([])
 const selectedGrade = ref<string[]>([])
-const academies = ref<Academy[]>([])   // ① 先留空
+const academies = inject<Academy[]>('academies', [])
 
 /* ---------- emit ---------- */
 const emit = defineEmits<{
@@ -43,63 +43,6 @@ const clearAllFilters = () => {
   emit('apply-filters')
 }
 
-/* ---------- 构造数据 ---------- */
-onMounted(() => {
-  // 1. 生成「全校整体」专业
-  const gradeSet = new Set<string>()
-  defaultAcademyData.forEach(ac =>
-      ac.majors[0].grades.forEach(g => gradeSet.add(g.name))
-  )
-  const allGrades = Array.from(gradeSet).sort()
-
-  const wholeSchoolMajor: Major = {
-    name: '全校整体',
-    grades: allGrades.map(gName => {
-      const dimLen = defaultAcademyData[0].majors[0].grades.find(g => g.name === gName)?.data.length ?? 0
-      const dataAvg: number[] = []
-      for (let d = 0; d < dimLen; d++) {
-        let sum = 0, cnt = 0
-        defaultAcademyData.forEach(ac =>
-            ac.majors.forEach(ma =>
-                ma.grades.forEach(gr => {
-                  if (gr.name === gName && gr.data[d] !== undefined) { sum += gr.data[d]; cnt++ }
-                })
-            )
-        )
-        dataAvg.push(cnt ? Number((sum / cnt).toFixed(2)) : 0)
-      }
-      return { name: gName, data: dataAvg }
-    })
-  }
-
-  // 2. 生成「XX学院整体」专业 & 插入对应学院
-  const processed: Academy[] = defaultAcademyData.map(ac => {
-    const overall: Major = {
-      name: `${ac.name}整体`,
-      grades: ac.majors[0].grades.map((_, gIdx) => {
-        const gName = ac.majors[0].grades[gIdx].name
-        const dimLen = ac.majors[0].grades[gIdx].data.length
-        const dataAvg: number[] = []
-        for (let d = 0; d < dimLen; d++) {
-          let sum = 0, cnt = 0
-          ac.majors.forEach(m => {
-            const g = m.grades[gIdx]
-            if (g && g.data[d] !== undefined) { sum += g.data[d]; cnt++ }
-          })
-          dataAvg.push(cnt ? Number((sum / cnt).toFixed(2)) : 0)
-        }
-        return { name: gName, data: dataAvg }
-      })
-    }
-    return { ...ac, majors: [overall, ...ac.majors] }
-  })
-
-  // 3. 学校整体学院放最前
-  academies.value = [
-    { name: '学校整体', majors: [wholeSchoolMajor] },
-    ...processed
-  ]
-})
 </script>
 
 <template>
