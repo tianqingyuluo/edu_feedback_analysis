@@ -1,85 +1,124 @@
 <template>
   <div class="dashboard-layout p-6 bg-gray-100 h-[80vh] flex flex-col">
     <!-- 顶部菜单 -->
-    <div class="flex space-x-2 mb-4 p-1 rounded-lg bg-white shadow-sm">
-      <div @click="activeChart = 'EHI'"   :class="menuItemClass('EHI')">EHI</div>
-      <div @click="activeChart = 'RPI'"   :class="menuItemClass('RPI')">RPI</div>
-      <div @click="activeChart = 'Bubble'" :class="menuItemClass('Bubble')">Bubble</div>
-      <div @click="activeChart = 'Metric'" :class="menuItemClass('Metric')">Metric</div>
-      <div @click="activeChart = 'pie'" :class="menuItemClass('pie')">pie</div>
-    </div>
+    <div class="flex items-center justify-between mb-4 p-1 rounded-lg bg-white shadow-sm">
+      <!-- 左侧图表切换 -->
+      <div class="flex space-x-2">
+        <div
+            v-for="key in ChartName"
+            :key="key"
+            @click="activeChart = key"
+            :class="menuItemClass(key)"
+        >
+          {{ key }}
+        </div>
+      </div>
 
+      <!-- 右侧 AI 聊天按钮 -->
+      <Dialog>
+        <DialogTrigger as-child>
+          <Button variant="outline">AI 聊天</Button>
+        </DialogTrigger>
+        <DialogContent
+            class="sm:max-w-[700px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]"
+        >
+          <DialogHeader class="p-6 pb-0">
+            <DialogTitle>AI 智能对话</DialogTitle>
+          </DialogHeader>
+
+          <div class="overflow-y-auto px-6 min-h-[80vh]">
+            <AIchat  class="h-full"/>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+    <!--把你的图表往这个图表区加，一页一个，后续可能会有ai点评字段，加在原本的图表里，直接把这个文件当父组件，子图表通过prop获取 -->
     <!-- 图表区 -->
-    <div class="flex-1">
-      <EHI        v-if="activeChart === 'EHI'" />
-      <RPI        v-if="activeChart === 'RPI'" />
+    <div class="flex-1 min-h-[80vh]">
+      <EHI v-if="activeChart === 'EHI'" />
+      <RPI v-if="activeChart === 'RPI'" />
       <BubbleChart v-if="activeChart === 'Bubble'" />
       <MetricChart v-if="activeChart === 'Metric'" />
-      <TimePie v-if="activeChart==='pie'" />
+      <TimePie v-if="activeChart === 'pie'" />
+      <!-- AIchat 已移到 Dialog，不再在这里渲染 -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, provide } from 'vue'
+import { useRoute } from 'vue-router'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+
 import EHI from '@/views/EHI.vue'
 import RPI from '@/views/RPI.vue'
 import BubbleChart from '@/views/BubbleChart.vue'
 import MetricChart from '@/views/Metric.vue'
+import TimePie from '@/views/TimePie.vue'
+import AIchat from '@/views/AIchat/AIchat.vue'
+//下面是类型导入，如果需要可以导入一下
 import { buildAcademiesWithOverall } from '@/utils/academyBuilder'
+import { buildTimeAcademies } from '@/utils/buildTimeData'
 import type { Academy } from '@/types/majorModels'
-import {type MetricGroup} from '@/types/Metric'
-import { useRoute } from 'vue-router'
-import TimePie from "@/views/TimePie.vue";
-import {buildTimeAcademies} from "@/utils/buildTimeData.ts";
+import type { MetricGroup } from '@/types/Metric'
 
 const route = useRoute()
 const reportId = ref<string>(route.params.reportId as string)
-//加一个图就往ChartName后加一个阻断
+//取一个名字加在 ChartName， ChartName里（上面的是类，下面的是实例），和图表区的名字对的上就行
+/* ---------- 图表切换 ---------- */
 type ChartName = 'EHI' | 'RPI' | 'Bubble' | 'Metric' | 'pie'
-const activeChart = ref<ChartName>('EHI')//决定现在选择哪个页
-//数据都写在一起，导入类型，确保类型正确
-/* ---------- 数据 ---------- */
-const academies      = ref<Academy[]>([])
-const rpiAcademies   = ref<Academy[]>([])
-const bubbleData     = ref<MetricGroup[]>([])   // 气泡图专用
-const trendData      = ref<MetricGroup[]>([]) // 趋势图专用
-const rawTimeData = ref<Academy[]>([])//饼图专用
-//后续组件都最为这个组件的下游组件，这个组件统一 provide，下游组件通过inject接受
-/* ---------- 统一 provide ---------- */
-provide('academies',      academies)
-provide('rpiAcademies',   rpiAcademies)
-provide('bubbleData',     bubbleData)   // 气泡图
-provide('trendData',      trendData)    // 趋势图
-provide('timeAcademies',  rawTimeData)//饼图
-//下面是拉数据的函数，目前逻辑不正确，将假数据贴进去即可，后续会正确返回后端数据
-/* ---------- 一次性拉数据 ---------- */
-onMounted(async () => {
-  // 1. 基础学院数据
-  const { defaultAcademyData } = await import('@/types/majorModels')
-  academies.value    = buildAcademiesWithOverall(defaultAcademyData)
-  rpiAcademies.value = buildAcademiesWithOverall(defaultAcademyData)
-
-  // 2. 气泡图需要的 metrics
-  const { default: academiesData } = await import('@/components/layout/willbedeleted/bubble_data.json')
-  bubbleData.value = academiesData as MetricGroup[]
-
-  //3.趋势图需要的数据
-  const {defaultMetricData}=await import('@/types/Metric')
-  trendData.value = defaultMetricData
-  //4.饼图需要的数据
-  const { default: timeAcademies } = await import('@/components/layout/willbedeleted/compact_time_data.json')
-  rawTimeData.value = buildTimeAcademies(timeAcademies)
-})
-
-/* ---------- 菜单样式 ---------- */
+const activeChart = ref<ChartName>('EHI')
+const  ChartName: ChartName[] = ['EHI', 'RPI', 'Bubble', 'Metric', 'pie']
+//动态选中样式，不用管
 const menuItemClass = (key: ChartName) => [
   'px-4 py-2 rounded-md cursor-pointer text-sm font-medium transition',
   activeChart.value === key
       ? 'bg-blue-600 text-white shadow'
-      : 'text-gray-700 hover:bg-gray-200'
+      : 'text-gray-700 hover:bg-gray-200',
 ]
+//需要什么数据在这里加一个变量
+/* ---------- 数据提供 ---------- */
+const academies = ref<Academy[]>([])
+const rpiAcademies = ref<Academy[]>([])
+const bubbleData = ref<MetricGroup[]>([])
+const trendData = ref<MetricGroup[]>([])
+const rawTimeData = ref<Academy[]>([])
+//通过provide提供给下游组件
+provide('academies', academies)
+provide('rpiAcademies', rpiAcademies)
+provide('bubbleData', bubbleData)
+provide('trendData', trendData)
+provide('timeAcademies', rawTimeData)
+//这里是拉取数据的逻辑，到时候会调用cwh的方法，把我们后端生成的数据传给每一个要传下去的变量
+/* ---------- 一次性拉数据 ---------- */
+onMounted(async () => {
+  const { defaultAcademyData } = await import('@/types/majorModels')
+  academies.value = buildAcademiesWithOverall(defaultAcademyData)
+  rpiAcademies.value = buildAcademiesWithOverall(defaultAcademyData)
+
+  const { default: academiesData } = await import('@/components/layout/willbedeleted/bubble_data.json')
+  bubbleData.value = academiesData as MetricGroup[]
+
+  const { defaultMetricData } = await import('@/types/Metric')
+  trendData.value = defaultMetricData
+
+  const { default: timeAcademies } = await import('@/components/layout/willbedeleted/compact_time_data.json')
+  rawTimeData.value = buildTimeAcademies(timeAcademies)
+})
+
 </script>
+
 <style scoped>
-.dashboard-layout { font-family: 'Inter', sans-serif; }
+.dashboard-layout {
+  font-family: 'Inter', sans-serif;
+}
 </style>

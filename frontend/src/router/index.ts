@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 /* === 统一占位组件 === */
-const test = () => import('@/views/Placeholder.vue')
+const AiChat = () => import('@/views/AIchat/AIchat.vue')
 const Login = () => import('@/login/Index.vue')
 const PersonManagement = () => import('@/views/PersonManagement.vue')
 const DataManagement   = () => import('@/views/DataManagement.vue')
@@ -19,7 +19,7 @@ const routes = [
             { path: 'data-hub',    name: 'DataHub',    component: ExcelManagement },
             { path: 'user-mgmt',   name: 'UserMgmt',   component: PersonManagement },
             { path: 'analytics',   name: 'Analytics',  component: DataManagement },
-            { path: 'ai-chat',     name: 'AiChat',     component: test },
+            { path: 'ai-chat',     name: 'AiChat',     component: AiChat },
             { path: 'report/:reportId', name: 'ReportShow', component: () => import('@/views/Home.vue'), props: true },
         ],
     },
