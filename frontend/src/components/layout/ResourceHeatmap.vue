@@ -87,5 +87,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="heatmapRef" class="w-full h-[500px]" />
+  <div ref="heatmapRef" class="w-full min-h-[500px] h-full" />
 </template>

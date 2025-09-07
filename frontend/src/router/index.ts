@@ -1,55 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@/views/Home.vue'
-// 使用动态导入实现懒加载
-const Main = () => import('@/views/Main.vue')
-const test = () => import('@/views/Placeholder.vue')
 
-const TeachingQuality = () => import('@/components/layout/NoName.vue')
+/* === 统一占位组件 === */
+const AiChat = () => import('@/views/AIchat/AIchat.vue')
+const Login = () => import('@/login/Index.vue')
 const PersonManagement = () => import('@/views/PersonManagement.vue')
-const ExcelManagement = () => import('@/views/ExcelManagement.vue')
-// const StudentSatisfaction = () => import('@/views/StudentSatisfaction.vue')
-// const CourseEvaluation = () => import('@/views/CourseEvaluation.vue')
-// const TeacherEvaluation = () => import('@/views/TeacherEvaluation.vue')
-// const DataManagement = () => import('@/views/DataManagement.vue')
-// const SystemSettings = () => import('@/views/SystemSettings.vue')
-// const Data = () => import('@/views/Data.vue')
-// const Analysis = () => import('@/views/Analysis.vue')
-// const Chat = () => import('@/views/Chat.vue')
-const ExcelManagement = () => import('@/views/ExcelManagement.vue')
-
-const Login=()=>import('@/login/Index.vue')
-
+const DataManagement   = () => import('@/views/DataManagement.vue')
+const ExcelManagement  = () => import('@/views/ExcelManagement.vue')
 const routes = [
     {
         path: '/',
-        name: 'Home',
-        component: Main,
-        children: [
-            // navItems 路由
-            { path: 'home', name: 'Overview', component: Home }, // 默认子路由
-            { path: 'teaching-quality', name: 'TeachingQuality', component: TeachingQuality },
-            { path: 'student-satisfaction', name: 'StudentSatisfaction', component: PersonManagement },
-            { path: 'course-evaluation', name: 'CourseEvaluation', component: test },
-            { path: 'teacher-evaluation', name: 'TeacherEvaluation', component: test },
-            { path: 'excel-management', name: 'ExcelManagement', component: ExcelManagement },
-            { path: 'system-settings', name: 'SystemSettings', component:test },
-
-            // tabs 路由
-            { path: 'data', name: 'Data', component: test },
-            { path: 'analysis', name: 'Analysis', component: test },
-            { path: 'chat', name: 'Chat', component: test },
-
-
-        ]
+        redirect: '/admin/data-hub', // 默认跳数据管理
     },
-    {path: '/login', name: 'Login', component: Login},
-    { path: '/excel-management', name: 'ExcelManagement', component: ExcelManagement },
+    {
+        path: '/admin',
+        component: () => import('@/views/Main.vue'), // 布局壳子
+        children: [
+            /* --- navItems 对应区域（全部先指向 Placeholder）--- */
+            { path: 'data-hub',    name: 'DataHub',    component: ExcelManagement },
+            { path: 'user-mgmt',   name: 'UserMgmt',   component: PersonManagement },
+            { path: 'analytics',   name: 'Analytics',  component: DataManagement },
+            { path: 'ai-chat',     name: 'AiChat',     component: AiChat },
+            { path: 'report/:reportId', name: 'ReportShow', component: () => import('@/views/Home.vue'), props: true },
+        ],
+    },
+    { path: '/login', name: 'Login', component: Login },
 ]
 
 const router = createRouter({
     history: createWebHistory(),
-    // @ts-ignore
-    routes
+    routes,
 })
 
 export default router

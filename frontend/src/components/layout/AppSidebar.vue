@@ -12,13 +12,10 @@ import { useRoutesStore } from '@/store/routeStore.ts';
 import type { AppRoute } from '@/store/routeStore.ts'; // 导入 AppRoute 类型以供使用
 
 const navItems = [
-  { name: "概览", path: "/home" },
-  { name: "教学质量", path: "/teaching-quality" },
-  { name: "学生满意度", path: "/student-satisfaction" },
-  { name: "课程评估", path: "/course-evaluation" },
-  { name: "教师评价", path: "/teacher-evaluation" },
-  { name: "数据管理", path: "/data-management" },
-  { name: "系统设置", path: "/system-settings" }
+  { name: '数据管理', path: '/admin/data-hub' },
+  { name: '人员管理', path: '/admin/user-mgmt' },
+  { name: '分析管理', path: '/admin/analytics' },
+  { name: 'AI 对话', path: '/admin/ai-chat' },
 ];
 
 const route = useRoute();
@@ -46,7 +43,7 @@ const navigateTo = (item: { path: string; name: string }) => {
 </script>
 
 <template>
-  <Sidebar collapsible="offcanvas" class="bg-white border-r border-gray-200">
+  <Sidebar collapsible="offcanvas" class="bg-white border-r border-gray-200 max-w-[192px]">
     <SidebarContent>
       <SidebarGroup class="p-0">
         <SidebarMenu class="space-y-1">
@@ -66,7 +63,7 @@ const navigateTo = (item: { path: string; name: string }) => {
           >
             <router-link
                 :to="item.path"
-                class="sidebar-link block py-2 text-xl rounded-none pl-8"
+                class="sidebar-link block py-2 text-[18px] rounded-none pl-8"
                 :class="{
                     'text-blue-600': isActiveTab(item.path),
                     'text-gray-900': !isActiveTab(item.path)
