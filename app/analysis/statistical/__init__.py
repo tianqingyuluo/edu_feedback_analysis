@@ -4,11 +4,17 @@
 """
 
 from .group_comparison_radar_chart import create_radar_echarts_json
-from .bubble_chart_analysis import create_bubble_echarts_json
-from .sankey_analysis import create_sankey_echarts_json
+from .teacher_student_interaction_bubble_chart.teacher_student_interaction_bubble_chart import create_bubble_echarts_json
+from app.analysis.statistical.student_time_allocation_pie_chart.student_time_allocation_pie_chart import build_academy_array
+from app.analysis.statistical.academic_maturity_by_grade_aggregator.AcademicMaturityProcessor import process_maturity_to_json
+from app.analysis.statistical.correlation_based_EHI_builder.ehiCalculator import DataProcessor
+from app.analysis.statistical.correlation_based_RPI_builder.RPICalculator import RPIProcessor
 
 __all__ = [
     'create_radar_echarts_json',
     'create_bubble_echarts_json',
-    'create_sankey_echarts_json',
+    'build_academy_array',
+    'process_maturity_to_json',
+    'DataProcessor',
+    'RPIProcessor'
 ]

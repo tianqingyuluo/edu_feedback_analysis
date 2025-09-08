@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     database_username: str
     analysis_file_path: str
     machine_learning_models_path: str
+    analysis_task_path: str
+    redis_url: str
     secret_key: str
     algorithm: str
     access_token_expire_minutes: int
