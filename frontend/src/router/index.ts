@@ -6,6 +6,8 @@ const Login = () => import('@/login/Index.vue')
 const PersonManagement = () => import('@/views/PersonManagement.vue')
 const DataManagement   = () => import('@/views/DataManagement.vue')
 const ExcelManagement  = () => import('@/views/ExcelManagement.vue')
+
+
 const routes = [
     {
         path: '/',
@@ -24,10 +26,12 @@ const routes = [
         ],
     },
     { path: '/login', name: 'Login', component: Login },
+
 ]
 
 const router = createRouter({
     history: createWebHistory(),
+    // @ts-ignore
     routes,
 })
 

@@ -1,12 +1,9 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import * as echarts from 'echarts';
-
+import {satisfactionDistributionData} from "@/types/CSIValues.ts"
 // JSON 数据
-const jsonData = {
-  "labels": ["满意", "较满意", "一般", "较不满意", "不满意"],
-  "values": [2929, 2877, 3782, 3280, 958]
-};
+const jsonData = satisfactionDistributionData
 
 const chartRef = ref(null);
 let chartInstance = null;

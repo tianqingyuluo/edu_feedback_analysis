@@ -40,6 +40,9 @@
       <BubbleChart v-if="activeChart === 'Bubble'" />
       <MetricChart v-if="activeChart === 'Metric'" />
       <TimePie v-if="activeChart === 'pie'" />
+      <IPD v-if="activeChart === 'IPD'" />
+      <DPFE v-if="activeChart === 'DPFE'" />
+      <CSI v-if="activeChart === 'CSI'" />
       <!-- AIchat 已移到 Dialog，不再在这里渲染 -->
     </div>
   </div>
@@ -64,6 +67,9 @@ import RPI from '@/views/RPI.vue'
 import BubbleChart from '@/views/BubbleChart.vue'
 import MetricChart from '@/views/Metric.vue'
 import TimePie from '@/views/TimePie.vue'
+import IPD from '@/views/IPD.vue'
+import DPFE from '@/views/DPFE.vue'
+import CSI from '@/views/CSI.vue'
 import AIchat from '@/views/AIchat/AIchat.vue'
 //下面是类型导入，如果需要可以导入一下
 import { buildAcademiesWithOverall } from '@/utils/academyBuilder'
@@ -75,9 +81,9 @@ const route = useRoute()
 const reportId = ref<string>(route.params.reportId as string)
 //取一个名字加在 ChartName， ChartName里（上面的是类，下面的是实例），和图表区的名字对的上就行
 /* ---------- 图表切换 ---------- */
-type ChartName = 'EHI' | 'RPI' | 'Bubble' | 'Metric' | 'pie'
+type ChartName = 'EHI' | 'RPI' | 'Bubble' | 'Metric' | 'pie' | 'IPD' | 'DPFE' | 'CSI'
 const activeChart = ref<ChartName>('EHI')
-const  ChartName: ChartName[] = ['EHI', 'RPI', 'Bubble', 'Metric', 'pie']
+const  ChartName: ChartName[] = ['EHI', 'RPI', 'Bubble', 'Metric', 'pie', 'IPD', 'DPFE', 'CSI']
 //动态选中样式，不用管
 const menuItemClass = (key: ChartName) => [
   'px-4 py-2 rounded-md cursor-pointer text-sm font-medium transition',
