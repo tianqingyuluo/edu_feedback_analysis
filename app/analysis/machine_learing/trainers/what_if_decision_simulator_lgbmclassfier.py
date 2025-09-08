@@ -34,7 +34,7 @@ def normalize(X):
         X[col] = temp.multiply(scaler).astype(int)
     return X
 
-def pick_up_features(X: pd.DataFrame, y: pd.Series, score: float) -> tuple[pd.DataFrame, pd.Series]:
+def pick_up_features(X: pd.DataFrame, y: pd.Series, score: float) -> tuple[pd.DataFrame, pd.Series, list[str]]:
     """
     自动根据传入的目标指标筛选相关的关系最近n条指标（相关度阈值）
 
@@ -71,7 +71,7 @@ def pick_up_features(X: pd.DataFrame, y: pd.Series, score: float) -> tuple[pd.Da
 
     X = X[selected_features]
 
-    return X, y
+    return X, y, selected_features
 
 def training_with_EMOTE_bayes_search(X, y) -> LGBMClassifier:
     """
@@ -186,7 +186,7 @@ def train(X: pd.DataFrame, y: pd.Series, score: float) -> LGBMClassifier:
     """
     X = preprocess(X)
     X = normalize(X)
-    X, y = pick_up_features(X, y, score)
+    X, y , _ = pick_up_features(X, y, score)
     model = training_with_EMOTE_bayes_search(X, y)
 
     return model

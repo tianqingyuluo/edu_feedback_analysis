@@ -52,9 +52,10 @@ class ModelVersionManager:
                 # 提取版本号
                 if "_" in file_name:
                     parts = file_name.split("_")
-                    if len(parts) >= 2 and parts[1].startswith("v"):
+                    if len(parts) >= 2 and parts[-1].startswith("v"):
                         try:
-                            version_num = int(parts[1][1:])  # 去掉'v'前缀
+                            point_pos = parts[-1].find(".")
+                            version_num = int(parts[-1][1:point_pos])  # 去掉'v'前缀
                             versions.append((version_num, file_path))
                         except ValueError:
                             continue
