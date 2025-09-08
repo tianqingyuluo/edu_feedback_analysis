@@ -1,7 +1,7 @@
 import pandas as pd
 from semopy import Model
 
-from app.analysis.statistical.student_success_route_sankey_chart import process_data
+from app.analysis.statistical.student_satisfaction_route_sankey_chart import process_data
 
 def extract_paths_to_target(df, target='综合满意度'):
     # 1. 找出直接影响目标的变量

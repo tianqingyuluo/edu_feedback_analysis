@@ -5,11 +5,13 @@ import pandas as pd
 
 from app.analysis.machine_learing.models import ModelVersionManager
 from app.core.config import settings
+from app.analysis.machine_learing.trainers.what_if_decision_simulator_lgbmclassfier import preprocess, normalize, pick_up_features
 from app.schemas.what_if_decision_simulator import (
     WhatIfInput,
     WhatIfOutput,
     ClassProbability,
     PredictionOutput,
+    FeaturesOutput,
 )
 
 
@@ -62,6 +64,22 @@ async def load_model(model_name: str, version: int = None):
         raise FileNotFoundError(f"找不到模型文件: {model_name} (版本: {version})")
     except Exception as e:
         raise Exception(f"加载模型时出错: {str(e)}")
+
+def send_feature_importance(df: pd.DataFrame, y: pd.Series, score: float):
+    df_copy = df.copy()
+    df_copy = preprocess(df_copy)
+    df_copy = normalize(df_copy)
+    _, _, features = pick_up_features(df_copy, y, score)
+    features_with_rank = []
+    for feature in features:
+        unique_count = df_copy[feature].nunique()
+        features_with_rank.append(
+            FeaturesOutput(
+                feature_classes=unique_count,
+                feature_name=feature
+            )
+        )
+    return features_with_rank
 
 def what_if_simulation(model, input_data: WhatIfInput) -> WhatIfOutput:
     # 1. 构造输入特征 DataFrame

@@ -4,9 +4,13 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 from sqlalchemy import text
 from sqlmodel import SQLModel
+
+from app.analysis.machine_learing.core.celery_worker_manager import CeleryWorkerManager
 from app.db.database import db_manager
 from app.core.logging import app_logger
-from app.db.models import *  # 导入所有模型
+from app.db.models import * # 导入所有模型
+
+worker_manager = CeleryWorkerManager()
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """应用生命周期管理器"""
@@ -25,6 +29,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                 # 使用SQLModel创建所有表（如果不存在）
                 await conn.run_sync(SQLModel.metadata.create_all)
             app_logger.info("数据库表初始化完成")
+            # 启动 Celery Worker
+            app_logger.info("启动 Celery Worker...")
+            worker_manager.start_worker()
+            app_logger.info("Celery Worker 启动完成")
         else:
             app_logger.error("数据库连接失败")
 
@@ -32,6 +40,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         app_logger.error(f"应用启动失败，错误信息：{e}")
     finally:
+        app_logger.info("关闭应用...")
         app_logger.info("关闭数据库连接...")
         await db_manager.close()
+        # 停止 Celery Worker
+        app_logger.info("停止 Celery Worker...")
+        worker_manager.stop_worker()
+        app_logger.info("Celery Worker 已停止")
+
         app_logger.info("应用安全关闭")

@@ -26,3 +26,10 @@ class PredictionOutput(BaseModel):
 class WhatIfOutput(BaseModel):
     prediction: PredictionOutput
     metadata: dict[str, Any]
+
+class FeaturesOutput(BaseModel):
+    """
+    whatif决策模拟器特征输出数据模型
+    """
+    feature_name: str
+    feature_classes: int

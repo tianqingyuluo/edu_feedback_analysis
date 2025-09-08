@@ -124,8 +124,8 @@ async def async_train(df: pd.DataFrame):
 
     # 保存模型（pkl）
     version_manager = ModelVersionManager(settings.machine_learning_models_path)
-    version = await version_manager.get_next_version('student-portrait')
-    model_path = settings.machine_learning_models_path + f'student-portrait{version}'
+    version = await version_manager.get_next_version('student_portrait')
+    model_path = settings.machine_learning_models_path + f'student_portrait_v{version}.pkl'
 
     with open(model_path, "wb") as f:
         pickle.dump({
