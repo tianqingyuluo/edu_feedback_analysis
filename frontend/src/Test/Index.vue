@@ -15,14 +15,17 @@ import Demo11 from '@/Test/component/Demo11(满意度贡献值).vue'
 <template>
 <!-- 根容器，通常包含全局布局（如导航栏、页脚） -->
 <div id="app">
-<!--  <Demo1/>-->
+  <Demo1/>
   <Demo2/>
   <Demo3/>
+
   <Demo4/>
   <Demo5/>
   <Demo6/>
+  
   <Demo7/>
   <Demo8/>
+  
   <Demo9/>
   <Demo10/>
   <Demo11/>

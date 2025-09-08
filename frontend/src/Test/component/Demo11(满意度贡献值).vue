@@ -1,34 +1,9 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
-
+import {SatisfactionContributionData} from "@/types/CSIValues.ts"
 // 提供的 JSON 数据
-const jsonData = {
-  "labels": [
-    "校园生活_均值",
-    "学校服务_均值",
-    "学习情况_均值",
-    "自我提升_均值",
-    "实习_均值",
-    "专业课_均值",
-    "思政课_均值",
-    "劳动教育_均值",
-    "老师教育_均值",
-    "美育教育_均值"
-  ],
-  "values": [
-    0.1786,
-    0.1245,
-    0.1132,
-    0.0992,
-    0.0857,
-    0.0661,
-    0.0631,
-    0.0614,
-    0.0587,
-    0.0566
-  ]
-};
+const jsonData = SatisfactionContributionData
 
 const chartRef = ref(null);
 let chartInstance = null;

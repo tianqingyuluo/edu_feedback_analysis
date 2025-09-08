@@ -1,12 +1,10 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
+import {studentTypeData} from '@/types/IPDValues.js'
 
 // 新的 JSON 数据
-const personaData = {
-  labels: ["学业挣扎型", "自主学习型", "科研学霸型", "社团活跃型"],
-  values: [6345, 3659, 2702, 1120]
-};
+const personaData = studentTypeData
 
 const barRef = ref(null);
 let barChart = null;

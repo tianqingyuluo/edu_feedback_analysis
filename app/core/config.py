@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     project_name: str
     version: str
 
+
+
     class Config:
         # env_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
         env_file = ".env"
