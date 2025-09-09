@@ -1,12 +1,12 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import {ref, onMounted, onBeforeUnmount, inject} from "vue";
 import * as echarts from "echarts";
 
-import {
-  satisfactionDistributionData,
-  overallSatisfactionData,
-  SatisfactionContributionData
-} from "@/types/CSIValues.ts";
+
+
+const SCIOSatisfactionDistributionStruct = inject("SCIOSatisfactionDistributionStruct");
+const SCISOverallSatisfactionStruct = inject("SCISOverallSatisfactionStruct");
+const SCISSatisfactionContributionStruct = inject("SCISSatisfactionContributionStruct");
 
 // ========== 1. 满意度分布 ==========
 const distRef = ref(null);
@@ -34,7 +34,7 @@ const initDistChart = () => {
     },
     xAxis: {
       type: "category",
-      data: satisfactionDistributionData.labels,
+      data: SCIOSatisfactionDistributionStruct.value.labels,
       axisTick: { alignWithLabel: true }
     },
     yAxis: { type: "value", name: "人数" },
@@ -42,7 +42,7 @@ const initDistChart = () => {
       {
         name: "人数",
         type: "bar",
-        data: satisfactionDistributionData.values,
+        data: SCIOSatisfactionDistributionStruct.value.values,
         barWidth: "50%",
         itemStyle: {
           color: (params) => colorMap[params.name] || "#999" // 默认灰色
@@ -58,7 +58,7 @@ const overallRef = ref(null);
 let overallChart = null;
 const initOverallChart = () => {
   overallChart = echarts.init(overallRef.value);
-  const data = overallSatisfactionData;
+  const data = SCISOverallSatisfactionStruct.value;
   
   const leftLabels = data.labels.slice(0, 6);
   const rightLabels = data.labels.slice(6);
@@ -114,13 +114,13 @@ const initContribChart = () => {
     xAxis: { type: "value", name: "重要性", min: 0 },
     yAxis: {
       type: "category",
-      data: SatisfactionContributionData.labels,
+      data: SCISSatisfactionContributionStruct.value.labels,
       inverse: true
     },
     series: [
       {
         type: "bar",
-        data: SatisfactionContributionData.values,
+        data: SCISSatisfactionContributionStruct.value.values,
         itemStyle: { color: "#398cff" },
         barCategoryGap: "40%"
       }

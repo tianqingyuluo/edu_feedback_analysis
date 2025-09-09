@@ -24,7 +24,7 @@ export const satisfactionPartData: satisfactionPartStruct = {
 //Demo8(热力图)数据结构
 export interface heatmapStruct {
     labels: string[];
-    values: number[][];
+    matrix: number[][];
 }
 
 export const heatmapData: heatmapStruct = {

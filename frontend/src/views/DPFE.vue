@@ -1,7 +1,13 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
-import { satisfactionPartData, heatmapData } from "@/types/DPFEValues.js";
+
+import {inject} from "vue";
+
+
+const DPFESatisfactionPartData = inject('DPFESatisfactionPartData')
+const DPFEHeatmapData = inject('DPFEHeatmapData')
+
 
 // ========== 1. 多面板满意度分布 ==========
 const partRef = ref(null);
@@ -10,7 +16,7 @@ let partChart = null;
 const initPartChart = () => {
   partChart = echarts.init(partRef.value);
   
-  const categories = Object.keys(satisfactionPartData);
+  const categories = Object.keys(DPFESatisfactionPartData.value);
   const colors = ["#4CAF50", "#8BC34A", "#FFC107", "#FF9800", "#F44336"];
   
   const grid = [];
@@ -36,7 +42,7 @@ const initPartChart = () => {
     
     xAxis.push({
       type: "category",
-      data: satisfactionPartData[cat].labels,
+      data: DPFESatisfactionPartData.value[cat].labels,
       gridIndex: idx,
       axisLabel: { fontSize: 10 }
     });
@@ -51,7 +57,7 @@ const initPartChart = () => {
       type: "bar",
       xAxisIndex: idx,
       yAxisIndex: idx,
-      data: satisfactionPartData[cat].values,
+      data: DPFESatisfactionPartData.value[cat].values,
       itemStyle: { color: (params) => colors[params.dataIndex] },
       name: cat
     });
@@ -82,9 +88,9 @@ const initHeatmapChart = () => {
   heatmapChart = echarts.init(heatmapRef.value);
   
   const data = [];
-  const labels = heatmapData.labels;
+  const labels = DPFEHeatmapData.value.labels;
   
-  heatmapData.matrix.forEach((row, i) => {
+  DPFEHeatmapData.value.matrix.forEach((row, i) => {
     row.forEach((val, j) => {
       data.push([j, i, val.toFixed(2)]);
     });

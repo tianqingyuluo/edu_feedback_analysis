@@ -1,10 +1,24 @@
+//Demo10(整体满意分布)数据结构
+export interface satisfactionDistributionStruct {
+    labels: string[];
+    values: number[];
+}
+
+export const satisfactionDistributionData: satisfactionDistributionStruct = {
+    "labels": ["满意", "较满意", "一般", "较不满意", "不满意"],
+    "values": [2929, 2877, 3782, 3280, 958]
+}
+
+
+
+
 //Demo9(整体满意度)数据结构
 export interface overallSatisfactionStruct {
     labels: string[];
     series: {
         name: string;
         data: number[];
-    }
+    }[]
 }
 
 export const overallSatisfactionData: overallSatisfactionStruct = {
@@ -46,16 +60,9 @@ export const overallSatisfactionData: overallSatisfactionStruct = {
     ]
 }
 
-//Demo10(整体满意分布)数据结构
-export interface satisfaction_distributionStruct {
-    labels: string[];
-    values: number[];
-}
 
-export const satisfactionDistributionData: satisfaction_distributionStruct = {
-    "labels": ["满意", "较满意", "一般", "较不满意", "不满意"],
-    "values": [2929, 2877, 3782, 3280, 958]
-}
+
+
 
 //Demo11(满意度贡献值)
 export interface SatisfactionContributionStruct {

@@ -2,8 +2,11 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
 import "echarts-gl"; // 3D 支持
+import {inject} from "vue";
 
-import { studentTypeData, twoDimensionalData, threeDimensionalData } from "@/types/IPDValues.js";
+const IPDStudentTypeData = inject('IPDStudentTypeData')
+const IPDTwoDimensionalData = inject('IPDTwoDimensionalData')
+const IPDThreeDimensionalData = inject('IPDThreeDimensionalData')
 
 // ======== 1. 柱状图：人数分布 ========
 const barRef = ref(null);
@@ -13,12 +16,12 @@ const initBarChart = () => {
   barChart.setOption({
     title: { text: "各画像人数分布" },
     tooltip: { trigger: "axis" },
-    xAxis: { type: "category", data: studentTypeData.labels },
+    xAxis: { type: "category", data: IPDStudentTypeData.valueOf.labels },
     yAxis: { type: "value" },
     series: [
       {
         type: "bar",
-        data: studentTypeData.values,
+        data: IPDStudentTypeData.value.values,
         itemStyle: { color: "#5470C6" },
       },
     ],
@@ -33,7 +36,7 @@ const initScatter2DChart = () => {
   
   // 按 student_persona 分组
   const groups = {};
-  twoDimensionalData.pca_scatter.forEach((item) => {
+  IPDTwoDimensionalData.value.pca_scatter.forEach((item) => {
     if (!groups[item.student_persona]) groups[item.student_persona] = [];
     groups[item.student_persona].push([item.pc1, item.pc2]);
   });
@@ -68,7 +71,7 @@ const initScatter3DChart = () => {
   
   // 按 student_persona 分组
   const groups = {};
-  threeDimensionalData.pca_3d_scatter.forEach((item) => {
+  IPDThreeDimensionalData.value.pca_3d_scatter.forEach((item) => {
     if (!groups[item.student_persona]) groups[item.student_persona] = [];
     groups[item.student_persona].push([item.pc1, item.pc2, item.pc3]);
   });
@@ -110,6 +113,9 @@ const initScatter3DChart = () => {
 
 // ======== 生命周期管理 ========
 onMounted(() => {
+  
+  console.log("IPDStudentTypeData:", IPDStudentTypeData);
+  
   initBarChart();
   initScatter2DChart();
   initScatter3DChart();
