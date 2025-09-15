@@ -76,6 +76,16 @@ import { buildAcademiesWithOverall } from '@/utils/academyBuilder'
 import { buildTimeAcademies } from '@/utils/buildTimeData'
 import type { Academy } from '@/types/majorModels'
 import type { MetricGroup } from '@/types/Metric'
+import {studentTypeData} from "@/types/IPDValues.ts";
+
+import type {studentTypeStruct,twoDimensionalStruct,threeDimensionalStruct} from "@/types/IPDValues.ts";
+import type{satisfactionPartStruct,heatmapStruct} from "@/types/DPFEValues.ts";
+import {
+  type satisfactionDistributionStruct,
+  type overallSatisfactionStruct,
+  type SatisfactionContributionStruct,
+  satisfactionDistributionData, overallSatisfactionData, SatisfactionContributionData
+} from "@/types/CSIValues.ts";
 
 const route = useRoute()
 const reportId = ref<string>(route.params.reportId as string)
@@ -98,12 +108,35 @@ const rpiAcademies = ref<Academy[]>([])
 const bubbleData = ref<MetricGroup[]>([])
 const trendData = ref<MetricGroup[]>([])
 const rawTimeData = ref<Academy[]>([])
+
+const IPDStudentTypeData = ref<studentTypeStruct>();
+const IPDTwoDimensionalData = ref<twoDimensionalStruct>();
+const IPDThreeDimensionalData = ref<threeDimensionalStruct>();
+
+const DPFESatisfactionPartData = ref<satisfactionPartStruct>();
+const DPFEHeatmapData = ref<heatmapStruct>();
+
+const SCIOSatisfactionDistributionStruct=ref<satisfactionDistributionStruct>();
+const SCISOverallSatisfactionStruct=ref<overallSatisfactionStruct>();
+const SCISSatisfactionContributionStruct=ref<SatisfactionContributionStruct>();
+
 //通过provide提供给下游组件
 provide('academies', academies)
 provide('rpiAcademies', rpiAcademies)
 provide('bubbleData', bubbleData)
 provide('trendData', trendData)
 provide('timeAcademies', rawTimeData)
+
+provide('IPDStudentTypeData', IPDStudentTypeData)
+provide('IPDTwoDimensionalData', IPDTwoDimensionalData)
+provide('IPDThreeDimensionalData', IPDThreeDimensionalData)
+
+provide('DPFESatisfactionPartData', DPFESatisfactionPartData)
+provide('DPFEHeatmapData', DPFEHeatmapData)
+
+provide('SCIOSatisfactionDistributionStruct', SCIOSatisfactionDistributionStruct)
+provide('SCISOverallSatisfactionStruct', SCISOverallSatisfactionStruct)
+provide('SCISSatisfactionContributionStruct', SCISSatisfactionContributionStruct)
 //这里是拉取数据的逻辑，到时候会调用cwh的方法，把我们后端生成的数据传给每一个要传下去的变量
 /* ---------- 一次性拉数据 ---------- */
 onMounted(async () => {
@@ -119,6 +152,25 @@ onMounted(async () => {
 
   const { default: timeAcademies } = await import('@/components/layout/willbedeleted/compact_time_data.json')
   rawTimeData.value = buildTimeAcademies(timeAcademies)
+  
+
+  const { studentTypeData, twoDimensionalData, threeDimensionalData } = await import('@/types/IPDValues.ts');
+  IPDStudentTypeData.value = studentTypeData;
+  IPDTwoDimensionalData.value = twoDimensionalData;
+  IPDThreeDimensionalData.value = threeDimensionalData;
+  
+  const { satisfactionPartData, heatmapData } = await import('@/types/DPFEValues.ts');
+  DPFESatisfactionPartData.value = satisfactionPartData;
+  DPFEHeatmapData.value = heatmapData;
+  
+  const { satisfactionDistributionData, overallSatisfactionData, SatisfactionContributionData } = await import('@/types/CSIValues.ts');
+  SCIOSatisfactionDistributionStruct.value = satisfactionDistributionData
+  SCISOverallSatisfactionStruct.value = overallSatisfactionData;
+  SCISSatisfactionContributionStruct.value = SatisfactionContributionData;
+  
+  
+  
+  
 })
 
 </script>
