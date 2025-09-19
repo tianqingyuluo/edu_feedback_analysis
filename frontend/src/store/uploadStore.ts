@@ -33,13 +33,13 @@ export const useUploadStore = defineStore('upload', () => {
             /* 1. 一次性拉已分析集合（存起来） */
             analyzedList.value = await AnalysisService.getAnalysis()
             /* 2. 上传列表 */
-            const { message } = (await getUploadHistory(p-1, s)) as UploadHistoryResp
+            const { message } = (await getUploadHistory(p, s)) as UploadHistoryResp
             const rawList = message.items
             /* 3. 本地拼状态 */
             items.value = rawList.map(it => ({
                  ...it,
                  status: statusToCN(
-                    analyzedList.value.find(a => a.data_id === String(it.id))?.status
+                    analyzedList.value.find(a => a.dataid === String(it.id))?.status
                  )
             })) as UploadItem[]
 
@@ -67,8 +67,8 @@ export const useUploadStore = defineStore('upload', () => {
                     ]
             })) as UploadItem[]
             analyzedList.value = rawMock.map((it, idx) => ({
-                task_id: `fake-task-${it.id}`,
-                data_id: String(it.id),
+                taskid: `fake-task-${it.id}`,
+                dataid: String(it.id),
                 status: TaskStatus.COMPLETED,
                 progress: 100,
             }))
@@ -96,7 +96,7 @@ export const useUploadStore = defineStore('upload', () => {
         async function startAnalyze(dataId: string) {
         try{
             /* 1. 发起任务 */
-            const task = await AnalysisService.startAnalysis({ data_id: dataId })
+            const task = await AnalysisService.startAnalysis({ dataid: dataId })
             /* 2. 把状态先置为“分析中” */
             const idx = items.value.findIndex(it => it.id === dataId)
             if (idx === -1) return
@@ -107,7 +107,7 @@ export const useUploadStore = defineStore('upload', () => {
 
             const poll = setInterval(async () => {
                 try {
-                    const st = await AnalysisService.getStatus(task.task_id)
+                    const st = await AnalysisService.getStatus(task.taskid)
                     /* 实时进度 */
                     items.value[idx].progress = st.progress ?? 0
 
@@ -130,7 +130,7 @@ export const useUploadStore = defineStore('upload', () => {
                 }
             }, 1000)
 
-            return task.task_id
+            return task.taskid
         }catch (e: unknown) {
             /* 404/500/网络错误 统一走这里 */
             const idx = items.value.findIndex(it => it.id === dataId)
@@ -139,7 +139,7 @@ export const useUploadStore = defineStore('upload', () => {
         }
         }
         const getTaskIdByDataId = (dataId: string): string | undefined =>
-            analyzedList.value.find(a => a.data_id === dataId)?.task_id
+            analyzedList.value.find(a => a.dataid === dataId)?.taskid
     return { items, total, page, size, loading, error, fetchPage, changePage,analyzedList,startAnalyze,getTaskIdByDataId }},
     {
         persist: true
