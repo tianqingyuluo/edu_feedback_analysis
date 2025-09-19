@@ -144,19 +144,16 @@ provide('SCISSatisfactionContributionStruct', SCISSatisfactionContributionStruct
 /* ---------- 一次性拉数据 ---------- */
 onMounted(async () => {
   const response = await AnalysisService.getResults(reportId.value)
-  const { defaultAcademyData } = await import('@/types/majorModels')
-  academies.value = buildAcademiesWithOverall(defaultAcademyData)
-  rpiAcademies.value = buildAcademiesWithOverall(defaultAcademyData)
+  const model =await import('@/components/layout/willbedeleted/mock.json')//const result = response.model_predictions
 
-  const { default: academiesData } = await import('@/components/layout/willbedeleted/bubble_data.json')
-  bubbleData.value = academiesData as MetricGroup[]
+  const model_predictions =model.message.model_predictions
+  const statistical_analyses =model.message.statistical_analyses
 
-  const { defaultMetricData } = await import('@/types/Metric')
-  trendData.value = defaultMetricData
-
-  const { default: timeAcademies } = await import('@/components/layout/willbedeleted/compact_time_data.json')
-  rawTimeData.value = buildTimeAcademies(timeAcademies)
-  
+  academies.value = statistical_analyses.correlation_based_EHI_builder
+  rpiAcademies.value = statistical_analyses.correlation_based_RPI_builder
+  bubbleData.value =statistical_analyses.teacher_student_interaction_bubble_chart
+  trendData.value =statistical_analyses.academic_maturity_by_grade_aggregator
+  rawTimeData.value = statistical_analyses.student_time_allocation_pie_chart
 
   const { studentTypeData, twoDimensionalData, threeDimensionalData } = await import('@/types/IPDValues.ts');
   IPDStudentTypeData.value = studentTypeData;
