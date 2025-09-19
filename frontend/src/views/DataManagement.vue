@@ -95,6 +95,7 @@ function handleFailReason(id: string) {
             <span v-if="r.status==='已分析'"   class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">已分析</span>
             <span v-else-if="r.status==='分析中'" class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">分析中</span>
             <span v-else-if="r.status==='分析失败'" class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">分析失败</span>
+            <span v-else-if="r.status==='等待中'" class="px-2 py-1 bg-purple-100 text-purple-400 text-xs rounded-full">等待中</span>
             <span v-else class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">未分析</span>
           </div>
           <!-- 操作 -->
@@ -120,7 +121,7 @@ function handleFailReason(id: string) {
                 variant="destructive"
                 @click="handleFailReason(r.id)"
             >查看原因</Button>
-
+            <span v-else-if="r.status==='等待中'" class="px-2 py-1 text-xs">等待处理</span>
             <!-- 已分析：查看结果 -->
             <a
                 v-else

@@ -5,7 +5,7 @@ import {type AnalysisInit, type HistoryItem, TaskStatus, type UploadHistoryResp}
 import AnalysisService from "@/api/analysis.ts";
 
 interface UploadItem extends HistoryItem {
-    status?: '已分析' | '分析中' | '未分析' | '分析失败'
+    status?: '已分析' | '分析中' | '未分析' | '分析失败' | '等待中'
     progress?: number          // 0-100
 }
 export const statusToCN = (s: TaskStatus | undefined): string => {
@@ -62,8 +62,8 @@ export const useUploadStore = defineStore('upload', () => {
             /* 3. 本地拼随机状态 */
             items.value = rawMock.map(it => ({
                 ...it,
-                status: (['已分析', '分析中', '未分析'] as const)[
-                    Math.floor(Math.random() * 3)
+                status: (['已分析', '分析中', '未分析','分析失败','等待中'] as const)[
+                    Math.floor(Math.random() * 5)
                     ]
             })) as UploadItem[]
             analyzedList.value = rawMock.map((it, idx) => ({
@@ -102,7 +102,7 @@ export const useUploadStore = defineStore('upload', () => {
             if (idx === -1) return
 
             /* 初始状态 */
-            items.value[idx].status = '分析中'
+            items.value[idx].status = '等待中'
             items.value[idx].progress = 0
 
             const poll = setInterval(async () => {

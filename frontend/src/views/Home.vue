@@ -71,6 +71,9 @@ import IPD from '@/views/IPD.vue'
 import DPFE from '@/views/DPFE.vue'
 import CSI from '@/views/CSI.vue'
 import AIchat from '@/views/AIchat/AIchat.vue'
+
+import AnalysisService from '@/api/analysis'
+
 //下面是类型导入，如果需要可以导入一下
 import { buildAcademiesWithOverall } from '@/utils/academyBuilder'
 import { buildTimeAcademies } from '@/utils/buildTimeData'
@@ -140,6 +143,7 @@ provide('SCISSatisfactionContributionStruct', SCISSatisfactionContributionStruct
 //这里是拉取数据的逻辑，到时候会调用cwh的方法，把我们后端生成的数据传给每一个要传下去的变量
 /* ---------- 一次性拉数据 ---------- */
 onMounted(async () => {
+  const response = await AnalysisService.getResults(reportId.value)
   const { defaultAcademyData } = await import('@/types/majorModels')
   academies.value = buildAcademiesWithOverall(defaultAcademyData)
   rpiAcademies.value = buildAcademiesWithOverall(defaultAcademyData)
