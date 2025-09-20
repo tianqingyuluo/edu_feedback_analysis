@@ -26,10 +26,7 @@ const updateChart = () => {
     lineStyle: { width: 3 },
     itemStyle: { color: colorPalette[index % colorPalette.length] }
   }))
-  const xAxisData = Array.from(
-      { length: Math.max(...selectedMetrics.value.map(m => m.data.length), 0) },
-      (_, i) => `点${i + 1}`
-  )
+  const xAxisData = ['大一','大二','大三','大四']
   const option = {
     title: { text: selectedMetrics.value.length ? '指标趋势图' : '请选择指标', left: 'center' },
     tooltip: { trigger: 'axis' },

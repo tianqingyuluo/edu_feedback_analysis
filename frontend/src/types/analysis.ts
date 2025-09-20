@@ -7,8 +7,8 @@ export enum TaskStatus {
 
 /* ===== 裸数据 ===== */
 export interface AnalysisInit {
-    data_id: string;
-    task_id: string;
+    dataid: string;
+    taskid: string;
     status:  TaskStatus;
 }
 
@@ -16,24 +16,24 @@ export interface AnalysisInit {
 export type AnalysisInitBatch = AnalysisInit[];
 
 export interface StartAnalysisReq {
-    data_id: string;
+    dataid: string;
 }
 
 export interface AnalysisTask {
-    task_id: string;
+    taskid: string;
     status: TaskStatus;
 }
 
 export interface AnalysisStatus {
-    task_id: string;
+    taskid: string;
     status: TaskStatus;
     progress?: number; // 0-100
     message?: string;
 }
 
 export interface AnalysisResult {
-    task_id: string;
-    data_id: number;
+    taskid: string;
+    dataid: number;
     created_at: string; // ISO-8601
     summary: object;
     detailed_results: object;

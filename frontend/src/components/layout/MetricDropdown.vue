@@ -169,12 +169,6 @@ const selectedMetricsStats = computed(() => {
             />
             <div class="flex flex-col">
               <span class="text-sm">{{ metric.name }}</span>
-              <span class="text-xs text-muted-foreground">
-                数据点: {{ metric.data.length }}
-                <span v-if="metric.data.length > 0">
-                  | 最新: {{ metric.data[metric.data.length - 1] }}
-                </span>
-              </span>
             </div>
           </div>
         </DropdownMenuItem>
