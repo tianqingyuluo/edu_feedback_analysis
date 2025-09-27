@@ -73,7 +73,7 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile: UploadRawFile) => {
     'application/csv'
   ]
   const isValidType = allowedTypes.includes(rawFile.type)
-  const maxSize = 10 * 1024 * 1024 // 10MB
+  const maxSize = 1024 * 1024 * 1024 // 1GB
   const isLt10M = rawFile.size <= maxSize
   
   if (!isValidType) {
