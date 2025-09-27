@@ -1,7 +1,7 @@
 // request.js
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-const baseURL = '/api';
+const baseURL = 'http://localhost:8000/api/v1';
 const instance = axios.create({baseURL});
 import router from "../router/index.js";
 import {useUserStore} from "@/store/userStore.ts";

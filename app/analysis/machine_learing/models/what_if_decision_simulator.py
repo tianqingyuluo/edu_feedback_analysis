@@ -13,12 +13,14 @@ from app.schemas.what_if_decision_simulator import (
     PredictionOutput,
     FeaturesOutput,
 )
+from app.utils.model_cache import cached_model_load
 
 
-def load_model_sync(model_name: str, version: int = None):
+def load_model_sync(model_name: str, task_id: str, version: int = None):
     """
     同步方式加载指定的模型
 
+    :param task_id: 分析任务id
     :param model_name: 模型名称
     :param version: 模型版本号，如果为 None 则加载最新版本
     :return: 加载的模型对象
@@ -28,7 +30,7 @@ def load_model_sync(model_name: str, version: int = None):
 
     try:
         # 获取模型文件路径
-        model_path = version_manager.get_model_path(model_name, version)
+        model_path = version_manager.get_model_path_by_taskid(model_name, task_id, version)
 
         # 加载模型
         with open(model_path, "rb") as f:
@@ -40,10 +42,12 @@ def load_model_sync(model_name: str, version: int = None):
     except Exception as e:
         raise Exception(f"加载模型时出错: {str(e)}")
 
-async def load_model(model_name: str, version: int = None):
+@cached_model_load(expire_time=1800)
+async def load_model(model_name: str, task_id: str, version: int = None):
     """
     加载指定的模型
 
+    :param task_id: 分析任务id
     :param model_name: 模型名称
     :param version: 模型版本号，如果为 None 则加载最新版本
     :return: 加载的模型对象
@@ -53,7 +57,7 @@ async def load_model(model_name: str, version: int = None):
 
     try:
         # 获取模型文件路径
-        model_path = version_manager.get_model_path(model_name, version)
+        model_path = version_manager.get_model_path_by_taskid(model_name, task_id, version)
 
         # 加载模型
         with open(model_path, "rb") as f:

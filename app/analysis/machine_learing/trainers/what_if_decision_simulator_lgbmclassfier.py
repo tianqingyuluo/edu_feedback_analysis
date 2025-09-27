@@ -191,7 +191,7 @@ def train(X: pd.DataFrame, y: pd.Series, score: float) -> LGBMClassifier:
 
     return model
 
-async def async_train(X: pd.DataFrame, y: pd.Series, score: float) -> LGBMClassifier:
+async def async_train(X: pd.DataFrame, y: pd.Series, score: float, taskid: str) -> LGBMClassifier:
     """
     开始训练
     :param X: 总数据集
@@ -200,11 +200,12 @@ async def async_train(X: pd.DataFrame, y: pd.Series, score: float) -> LGBMClassi
     """
     loop = asyncio.get_running_loop()
     with ThreadPoolExecutor() as executor:
-        model = await loop.run_in_executor(executor, train, X, y, score)
+        future = loop.run_in_executor(executor, train, X, y, score)
+        model = await future
 
     version_manager = ModelVersionManager(settings.machine_learning_models_path)
     version = await version_manager.get_next_version('what-if_decision_simulator_LGBMClassfier')
-    path = settings.machine_learning_models_path + f'what-if_decision_simulator_LGBMClassfier_v{version}'
+    path = settings.machine_learning_models_path + f"{taskid}/" + f'what-if_decision_simulator_LGBMClassfier_v{version}'
 
     def save_model_sync():
         with open(str(path), 'wb') as f:

@@ -27,9 +27,10 @@ class ModelVersionManager:
             # 提取版本号
             if "_" in file_name:
                 parts = file_name.split("_")
-                if len(parts) >= 2 and parts[1].startswith("v"):
+                if len(parts) >= 2 and parts[-1].startswith("v"):
                     try:
-                        version_num = int(parts[1][1:])  # 去掉'v'前缀
+                        point_pos = parts[-1].find(".")
+                        version_num = int(parts[-1][1:point_pos])  # 去掉'v'前缀
                         versions.append(version_num)
                     except ValueError:
                         continue
@@ -73,6 +74,41 @@ class ModelVersionManager:
                 raise FileNotFoundError(f"Model file not found: {model_file}")
             return model_file
 
+    def get_model_path_by_taskid(self, model_name, taskid: str, version=None):
+        """获取用taskid路径存的模型文件的路径"""
+        if version is None:
+            # 获取最新版本
+            directory = self.model_dir / taskid
+            versions = []
+            prefix = f"{model_name}_v"
+
+            # 遍历目录中的所有文件
+            for file_path in directory.glob(f"{prefix}*.pkl"):
+                file_name = file_path.name
+                # 提取版本号
+                if "_" in file_name:
+                    parts = file_name.split("_")
+                    if len(parts) >= 2 and parts[-1].startswith("v"):
+                        try:
+                            point_pos = parts[-1].find(".")
+                            version_num = int(parts[-1][1:point_pos])  # 去掉'v'前缀
+                            versions.append((version_num, file_path))
+                        except ValueError:
+                            continue
+
+            if not versions:
+                raise FileNotFoundError(f"No model files found for {model_name}")
+
+            # 返回最高版本的文件路径
+            latest_version_path = max(versions, key=lambda x: x[0])[1]
+            return latest_version_path
+        else:
+            # 获取指定版本
+            model_file = self.model_dir / f"{model_name}_v{version}.pkl"
+            if not model_file.exists():
+                raise FileNotFoundError(f"Model file not found: {model_file}")
+            return model_file
+
     def list_model_versions(self, model_name):
         """列出模型的所有版本"""
         versions = []
@@ -84,9 +120,10 @@ class ModelVersionManager:
             # 提取版本号
             if "_" in file_name:
                 parts = file_name.split("_")
-                if len(parts) >= 2 and parts[1].startswith("v"):
+                if len(parts) >= 2 and parts[-1].startswith("v"):
                     try:
-                        version_num = int(parts[1][1:])  # 去掉'v'前缀
+                        point_pos = parts[-1].find(".")
+                        version_num = int(parts[-1][1:point_pos])  # 去掉'v'前缀
                         versions.append(version_num)
                     except ValueError:
                         continue

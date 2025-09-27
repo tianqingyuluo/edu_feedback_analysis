@@ -1,4 +1,3 @@
-import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -15,6 +14,11 @@ class Settings(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
     log_level: str
+    openai_api_key: str
+    openai_embedding_api_key: str
+    llm_model_name: str
+    embedding_model_name: str
+    chroma_persist_path: str
     project_name: str
     version: str
 

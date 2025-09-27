@@ -9,6 +9,9 @@ from app.analysis.statistical.student_time_allocation_pie_chart.student_time_all
 from app.analysis.statistical.academic_maturity_by_grade_aggregator.AcademicMaturityProcessor import process_maturity_to_json
 from app.analysis.statistical.correlation_based_EHI_builder.ehiCalculator import DataProcessor
 from app.analysis.statistical.correlation_based_RPI_builder.RPICalculator import RPIProcessor
+from app.analysis.statistical.student_portrait_chart import analyze_student_persona
+from app.analysis.statistical.satisfaction_part_chart import analyze_feedback_satisfaction
+from app.analysis.statistical.satisfaction_whole_chart import analyze_feedback
 
 __all__ = [
     'create_radar_echarts_json',
@@ -16,5 +19,8 @@ __all__ = [
     'build_academy_array',
     'process_maturity_to_json',
     'DataProcessor',
-    'RPIProcessor'
+    'RPIProcessor',
+    'analyze_student_persona',
+    'analyze_feedback_satisfaction',
+    'analyze_feedback',
 ]

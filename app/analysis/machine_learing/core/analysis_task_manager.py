@@ -12,9 +12,6 @@ from app.core.config import settings
 from app.core.logging import app_logger
 from app.analysis.machine_learing.models import ModelVersionManager
 from app.analysis.machine_learing.trainers import (
-    satisfaction_part as sp_trainer,
-    satisfaction_whole as sw_trainer,
-    student_portrait as stup_trainer,
     what_if_decision_simulator_lgbmclassfier as wi_trainer,
 )
 from app.analysis import statistical
@@ -58,21 +55,21 @@ class AnalysisTaskManager:
 
         # 支持的模型类型
         self.supported_models = {
-            "satisfaction_part": {
-                "trainer": sp_trainer.async_train,
-                "requires_target": False,
-                "description": "部分满意度分析模型",
-            },
-            "satisfaction_whole": {
-                "trainer": sw_trainer.async_train,
-                "requires_target": False,
-                "description": "整体满意度分析模型",
-            },
-            "student_portrait": {
-                "trainer": stup_trainer.async_train,
-                "requires_target": False,
-                "description": "学生画像分析模型",
-            },
+            # "satisfaction_part": {
+            #     "trainer": sp_trainer.async_train,
+            #     "requires_target": False,
+            #     "description": "部分满意度分析模型",
+            # },
+            # "satisfaction_whole": {
+            #     "trainer": sw_trainer.async_train,
+            #     "requires_target": False,
+            #     "description": "整体满意度分析模型",
+            # },
+            # "student_portrait": {
+            #     "trainer": stup_trainer.async_train,
+            #     "requires_target": False,
+            #     "description": "学生画像分析模型",
+            # },
             "what_if_decision_simulator": {
                 "trainer": wi_trainer.async_train,
                 "requires_target": True,
@@ -105,7 +102,19 @@ class AnalysisTaskManager:
             "correlation_based_RPI_builder": {
                 "function": statistical.RPIProcessor.process_dataframe_to_json,
                 "description": "基于RPI的关联性分析仪表盘+雷达图+热力图",
-            }
+            },
+            "student_portrait_chart": {
+                "function": statistical.analyze_student_persona,
+                "description": "学生画像分析",
+            },
+            "satisfaction_part_chart": {
+                "function": statistical.analyze_feedback_satisfaction,
+                "description": "部分满意度分析",
+            },
+            "satisfaction_whole_chart": {
+                "function": statistical.analyze_feedback,
+                "description": "整体满意度分析",
+            },
         }
 
         # 用来存储各个分析项和对应的数据库记录的映射
@@ -240,7 +249,7 @@ class AnalysisTaskManager:
                         y = data[target_column]
                         feature_score_threshold = task_config.get("feature_score_threshold", 0.1)
                         model_result = await model_config["trainer"](
-                            data, y, feature_score_threshold
+                            data, y, feature_score_threshold, task_id
                         )
                     else:
                         # 其他模型只需要数据
