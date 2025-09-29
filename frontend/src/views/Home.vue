@@ -159,7 +159,8 @@ onMounted (async() => {
     loading.value = true
 
     const response = await AnalysisService.getResults(reportId.value)
-    const model = response.detailed_results
+    console.log(response)
+    const model = response
 
     const model_predictions = model.model_predictions
     const statistical_analyses = model.statistical_analyses

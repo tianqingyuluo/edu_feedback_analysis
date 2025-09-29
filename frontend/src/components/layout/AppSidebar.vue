@@ -43,6 +43,9 @@ const navigateTo = (item: { path: string; name: string }) => {
 
 <template>
   <Sidebar collapsible="offcanvas" class="bg-white border-r border-gray-200 max-w-[192px]">
+    <div class="px-8 py-4 border-b border-gray-200 ">
+      <h2 class="text-lg font-semibold text-gray-900">管理系统</h2>
+    </div>
     <SidebarContent>
       <SidebarGroup class="p-0">
         <SidebarMenu class="space-y-1">

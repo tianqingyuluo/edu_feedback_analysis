@@ -90,8 +90,8 @@ watch(selectedMetrics, () => nextTick(updateChart), { deep: true })
     </div>
 
     <!-- 图表 -->
-    <div class="bg-white rounded-md shadow p-3 flex-1">
-      <div ref="chartRef" class="w-full h-full" />
+    <div class="bg-white rounded-md shadow p-3 flex-1 min-h-[500px]">
+      <div ref="chartRef" class="w-full h-full min-h-[500px]" />
     </div>
   </div>
 </template>

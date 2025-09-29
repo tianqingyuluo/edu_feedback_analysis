@@ -41,6 +41,7 @@ const handleLogout = async () => {
 
   await router.push('/login');
 };
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -54,14 +55,13 @@ const handleLogout = async () => {
               <Menu class="h-6 w-6" />
             </button>
           </SidebarTrigger>
-          <span class="text-lg font-semibold text-gray-800">我的应用</span>
         </div>
         <div class="flex items-center">
           <!-- 下拉菜单触发器 -->
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <button class="text-gray-700 hover:text-blue-600 transition-colors text-lg whitespace-nowrap px-3 py-1 rounded-md">
-                用户:admin
+                用户:{{userStore.userInfo.username}}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

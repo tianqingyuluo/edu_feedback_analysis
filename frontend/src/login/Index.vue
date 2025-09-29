@@ -56,7 +56,7 @@ const handleLogin = async () => {
     const res = await login(formData.value)
     userStore.setUserInfo(res.message)
     userStore.setToken(res.token)
-    await router.push('/home')
+    await router.push('/')
     ElMessage.success('登录成功')
   } else {
     ElMessage.error('请修正表单错误后再提交')
