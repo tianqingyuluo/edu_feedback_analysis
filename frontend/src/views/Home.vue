@@ -1,51 +1,61 @@
 <template>
-<div class="dashboard-layout p-6 bg-gray-100 h-[80vh] flex flex-col">
-  <!-- 顶部菜单 -->
-  <div class="flex items-center justify-between mb-4 p-1 rounded-lg bg-white shadow-sm">
-    <!-- 左侧图表切换 -->
-    <div class="flex space-x-2">
-      <div
-          v-for="key in ChartName"
-          :key="key"
-          @click="activeChart = key"
-          :class="menuItemClass(key)"
-      >
-        {{ key }}
+  <div class="dashboard-layout p-6 bg-gray-100 h-[80vh] flex flex-col">
+    <!-- 加载状态 -->
+    <div v-if="loading" class="flex-1 flex items-center justify-center">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p class="text-gray-600">数据加载中...</p>
       </div>
     </div>
-    
-    <!-- 右侧 AI 聊天按钮 -->
-    <Dialog>
-      <DialogTrigger as-child>
-        <Button variant="outline">AI 聊天</Button>
-      </DialogTrigger>
-      <DialogContent
-          class="sm:max-w-[700px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]"
-      >
-        <DialogHeader class="p-6 pb-0">
-          <DialogTitle>AI 智能对话</DialogTitle>
-        </DialogHeader>
-        
-        <div class="overflow-y-auto px-6 min-h-[80vh]">
-          <AIchat  class="h-full"/>
+
+    <!-- 内容区域 -->
+    <div v-else>
+      <!-- 顶部菜单 -->
+      <div class="flex items-center justify-between mb-4 p-1 rounded-lg bg-white shadow-sm">
+        <!-- 左侧图表切换 -->
+        <div class="flex space-x-2">
+          <div
+              v-for="key in ChartName"
+              :key="key"
+              @click="activeChart = key"
+              :class="menuItemClass(key)"
+          >
+            {{ key }}
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        <!-- 右侧 AI 聊天按钮 -->
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button variant="outline">AI 聊天</Button>
+          </DialogTrigger>
+          <DialogContent
+              class="sm:max-w-[700px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]"
+          >
+            <DialogHeader class="p-6 pb-0">
+              <DialogTitle>AI 智能对话</DialogTitle>
+            </DialogHeader>
+
+            <div class="overflow-y-auto px-6 min-h-[80vh]">
+              <AIchat  class="h-full"/>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <!-- 图表区 -->
+      <div class="flex-1 min-h-[80vh]">
+        <EHI v-if="activeChart === 'EHI'" />
+        <RPI v-if="activeChart === 'RPI'" />
+        <BubbleChart v-if="activeChart === 'Bubble'" />
+        <MetricChart v-if="activeChart === 'Metric'" />
+        <TimePie v-if="activeChart === 'pie'" />
+        <IPD v-if="activeChart === 'IPD'" />
+        <DPFE v-if="activeChart === 'DPFE'" />
+        <CSI v-if="activeChart === 'CSI'" />
+      </div>
+    </div>
   </div>
-  <!--把你的图表往这个图表区加，一页一个，后续可能会有ai点评字段，加在原本的图表里，直接把这个文件当父组件，子图表通过prop获取 -->
-  <!-- 图表区 -->
-  <div class="flex-1 min-h-[80vh]">
-    <EHI v-if="activeChart === 'EHI'" />
-    <RPI v-if="activeChart === 'RPI'" />
-    <BubbleChart v-if="activeChart === 'Bubble'" />
-    <MetricChart v-if="activeChart === 'Metric'" />
-    <TimePie v-if="activeChart === 'pie'" />
-    <IPD v-if="activeChart === 'IPD'" />
-    <DPFE v-if="activeChart === 'DPFE'" />
-    <CSI v-if="activeChart === 'CSI'" />
-    <!-- AIchat 已移到 Dialog，不再在这里渲染 -->
-  </div>
-</div>
 </template>
 
 <script setup lang="ts">
@@ -140,42 +150,47 @@ provide('DPFEHeatmapData', DPFEHeatmapData)
 provide('SCIOSatisfactionDistributionStruct', SCIOSatisfactionDistributionStruct)
 provide('SCISOverallSatisfactionStruct', SCISOverallSatisfactionStruct)
 provide('SCISSatisfactionContributionStruct', SCISSatisfactionContributionStruct)
+
+const loading = ref(true)
 //这里是拉取数据的逻辑，到时候会调用cwh的方法，把我们后端生成的数据传给每一个要传下去的变量
 /* ---------- 一次性拉数据 ---------- */
-onMounted(async () => {
-  const response = await AnalysisService.getResults(reportId.value)
-  const model =await import('@/components/layout/willbedeleted/mock.json')//const result = response.model_predictions
-  
-  const model_predictions =model.model_predictions
-  const statistical_analyses =model.statistical_analyses
-  
-  academies.value = statistical_analyses.correlation_based_EHI_builder
-  rpiAcademies.value = statistical_analyses.correlation_based_RPI_builder
-  bubbleData.value =statistical_analyses.teacher_student_interaction_bubble_chart
-  trendData.value =statistical_analyses.academic_maturity_by_grade_aggregator
-  rawTimeData.value = statistical_analyses.student_time_allocation_pie_chart
-  
-  IPDStudentTypeData.value = model.statistical_analyses.student_portrait_chart.studentTypeData;
-  
-  IPDTwoDimensionalData.value = {
-    pca_scatter: model.statistical_analyses.student_portrait_chart.pca_scatter
-  };
-  IPDThreeDimensionalData.value ={
-    pca_3d_scatter: model.statistical_analyses.student_portrait_chart.pca_3d_scatter
+onMounted (async() => {
+  try {
+    loading.value = true
+
+    const response = await AnalysisService.getResults(reportId.value)
+    const model = response.detailed_results
+
+    const model_predictions = model.model_predictions
+    const statistical_analyses = model.statistical_analyses
+
+    // 设置数据
+    academies.value = statistical_analyses.correlation_based_EHI_builder
+    rpiAcademies.value = statistical_analyses.correlation_based_RPI_builder
+    bubbleData.value = statistical_analyses.teacher_student_interaction_bubble_chart
+    trendData.value = statistical_analyses.academic_maturity_by_grade_aggregator
+    rawTimeData.value = statistical_analyses.student_time_allocation_pie_chart
+
+    IPDStudentTypeData.value = model.statistical_analyses.student_portrait_chart.studentTypeData;
+    IPDTwoDimensionalData.value = {
+      pca_scatter: model.statistical_analyses.student_portrait_chart.pca_scatter
+    };
+    IPDThreeDimensionalData.value = {
+      pca_3d_scatter: model.statistical_analyses.student_portrait_chart.pca_3d_scatter
+    }
+
+    DPFESatisfactionPartData.value = model.statistical_analyses.satisfaction_part_chart.satisfactionPartData
+    DPFEHeatmapData.value = model.statistical_analyses.satisfaction_part_chart.heatmapData;
+
+    SCIOSatisfactionDistributionStruct.value = model.statistical_analyses.satisfaction_whole_chart.satisfactionDistributionData;
+    SCISOverallSatisfactionStruct.value = model.statistical_analyses.satisfaction_whole_chart.overallSatisfactionData;
+    SCISSatisfactionContributionStruct.value = model.statistical_analyses.satisfaction_whole_chart.SatisfactionContributionData;
+
+  } catch (error) {
+    console.error('数据加载失败:', error)
+  } finally {
+    loading.value = false
   }
-  
-  
-  DPFESatisfactionPartData.value = model.statistical_analyses.satisfaction_part_chart.satisfactionPartData
-  DPFEHeatmapData.value = model.statistical_analyses.satisfaction_part_chart.heatmapData;
-  
-  
-  SCIOSatisfactionDistributionStruct.value = model.statistical_analyses.satisfaction_whole_chart.satisfactionDistributionData;
-  SCISOverallSatisfactionStruct.value =  model.statistical_analyses.satisfaction_whole_chart.overallSatisfactionData;
-  SCISSatisfactionContributionStruct.value =  model.statistical_analyses.satisfaction_whole_chart.SatisfactionContributionData;
-  
-  
-  
-  
 })
 
 </script>

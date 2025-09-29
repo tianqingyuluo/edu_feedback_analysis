@@ -34,9 +34,9 @@ export interface AnalysisStatus {
 export interface AnalysisResult {
     taskid: string;
     dataid: number;
-    created_at: string; // ISO-8601
+    created_at: string;
     summary: object;
-    detailed_results: object;
+    detailed_results: any;
 }
 /* ===== 后端整包包装（服务函数内部用） ===== */
 export interface Resp<T> {
