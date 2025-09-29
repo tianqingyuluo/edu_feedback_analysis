@@ -1,51 +1,51 @@
 <template>
-  <div class="dashboard-layout p-6 bg-gray-100 h-[80vh] flex flex-col">
-    <!-- 顶部菜单 -->
-    <div class="flex items-center justify-between mb-4 p-1 rounded-lg bg-white shadow-sm">
-      <!-- 左侧图表切换 -->
-      <div class="flex space-x-2">
-        <div
-            v-for="key in ChartName"
-            :key="key"
-            @click="activeChart = key"
-            :class="menuItemClass(key)"
-        >
-          {{ key }}
-        </div>
+<div class="dashboard-layout p-6 bg-gray-100 h-[80vh] flex flex-col">
+  <!-- 顶部菜单 -->
+  <div class="flex items-center justify-between mb-4 p-1 rounded-lg bg-white shadow-sm">
+    <!-- 左侧图表切换 -->
+    <div class="flex space-x-2">
+      <div
+          v-for="key in ChartName"
+          :key="key"
+          @click="activeChart = key"
+          :class="menuItemClass(key)"
+      >
+        {{ key }}
       </div>
-
-      <!-- 右侧 AI 聊天按钮 -->
-      <Dialog>
-        <DialogTrigger as-child>
-          <Button variant="outline">AI 聊天</Button>
-        </DialogTrigger>
-        <DialogContent
-            class="sm:max-w-[700px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]"
-        >
-          <DialogHeader class="p-6 pb-0">
-            <DialogTitle>AI 智能对话</DialogTitle>
-          </DialogHeader>
-
-          <div class="overflow-y-auto px-6 min-h-[80vh]">
-            <AIchat  class="h-full"/>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
-    <!--把你的图表往这个图表区加，一页一个，后续可能会有ai点评字段，加在原本的图表里，直接把这个文件当父组件，子图表通过prop获取 -->
-    <!-- 图表区 -->
-    <div class="flex-1 min-h-[80vh]">
-      <EHI v-if="activeChart === 'EHI'" />
-      <RPI v-if="activeChart === 'RPI'" />
-      <BubbleChart v-if="activeChart === 'Bubble'" />
-      <MetricChart v-if="activeChart === 'Metric'" />
-      <TimePie v-if="activeChart === 'pie'" />
-      <IPD v-if="activeChart === 'IPD'" />
-      <DPFE v-if="activeChart === 'DPFE'" />
-      <CSI v-if="activeChart === 'CSI'" />
-      <!-- AIchat 已移到 Dialog，不再在这里渲染 -->
-    </div>
+    
+    <!-- 右侧 AI 聊天按钮 -->
+    <Dialog>
+      <DialogTrigger as-child>
+        <Button variant="outline">AI 聊天</Button>
+      </DialogTrigger>
+      <DialogContent
+          class="sm:max-w-[700px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]"
+      >
+        <DialogHeader class="p-6 pb-0">
+          <DialogTitle>AI 智能对话</DialogTitle>
+        </DialogHeader>
+        
+        <div class="overflow-y-auto px-6 min-h-[80vh]">
+          <AIchat  class="h-full"/>
+        </div>
+      </DialogContent>
+    </Dialog>
   </div>
+  <!--把你的图表往这个图表区加，一页一个，后续可能会有ai点评字段，加在原本的图表里，直接把这个文件当父组件，子图表通过prop获取 -->
+  <!-- 图表区 -->
+  <div class="flex-1 min-h-[80vh]">
+    <EHI v-if="activeChart === 'EHI'" />
+    <RPI v-if="activeChart === 'RPI'" />
+    <BubbleChart v-if="activeChart === 'Bubble'" />
+    <MetricChart v-if="activeChart === 'Metric'" />
+    <TimePie v-if="activeChart === 'pie'" />
+    <IPD v-if="activeChart === 'IPD'" />
+    <DPFE v-if="activeChart === 'DPFE'" />
+    <CSI v-if="activeChart === 'CSI'" />
+    <!-- AIchat 已移到 Dialog，不再在这里渲染 -->
+  </div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -145,29 +145,33 @@ provide('SCISSatisfactionContributionStruct', SCISSatisfactionContributionStruct
 onMounted(async () => {
   const response = await AnalysisService.getResults(reportId.value)
   const model =await import('@/components/layout/willbedeleted/mock.json')//const result = response.model_predictions
-
-  const model_predictions =model.message.model_predictions
-  const statistical_analyses =model.message.statistical_analyses
-
+  
+  const model_predictions =model.model_predictions
+  const statistical_analyses =model.statistical_analyses
+  
   academies.value = statistical_analyses.correlation_based_EHI_builder
   rpiAcademies.value = statistical_analyses.correlation_based_RPI_builder
   bubbleData.value =statistical_analyses.teacher_student_interaction_bubble_chart
   trendData.value =statistical_analyses.academic_maturity_by_grade_aggregator
   rawTimeData.value = statistical_analyses.student_time_allocation_pie_chart
-
-  const { studentTypeData, twoDimensionalData, threeDimensionalData } = await import('@/types/IPDValues.ts');
-  IPDStudentTypeData.value = studentTypeData;
-  IPDTwoDimensionalData.value = twoDimensionalData;
-  IPDThreeDimensionalData.value = threeDimensionalData;
   
-  const { satisfactionPartData, heatmapData } = await import('@/types/DPFEValues.ts');
-  DPFESatisfactionPartData.value = satisfactionPartData;
-  DPFEHeatmapData.value = heatmapData;
+  IPDStudentTypeData.value = model.statistical_analyses.student_portrait_chart.studentTypeData;
   
-  const { satisfactionDistributionData, overallSatisfactionData, SatisfactionContributionData } = await import('@/types/CSIValues.ts');
-  SCIOSatisfactionDistributionStruct.value = satisfactionDistributionData
-  SCISOverallSatisfactionStruct.value = overallSatisfactionData;
-  SCISSatisfactionContributionStruct.value = SatisfactionContributionData;
+  IPDTwoDimensionalData.value = {
+    pca_scatter: model.statistical_analyses.student_portrait_chart.pca_scatter
+  };
+  IPDThreeDimensionalData.value ={
+    pca_3d_scatter: model.statistical_analyses.student_portrait_chart.pca_3d_scatter
+  }
+  
+  
+  DPFESatisfactionPartData.value = model.statistical_analyses.satisfaction_part_chart.satisfactionPartData
+  DPFEHeatmapData.value = model.statistical_analyses.satisfaction_part_chart.heatmapData;
+  
+  
+  SCIOSatisfactionDistributionStruct.value = model.statistical_analyses.satisfaction_whole_chart.satisfactionDistributionData;
+  SCISOverallSatisfactionStruct.value =  model.statistical_analyses.satisfaction_whole_chart.overallSatisfactionData;
+  SCISSatisfactionContributionStruct.value =  model.statistical_analyses.satisfaction_whole_chart.SatisfactionContributionData;
   
   
   
