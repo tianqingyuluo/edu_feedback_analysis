@@ -115,6 +115,8 @@ const initScatter3DChart = () => {
 onMounted(() => {
   
   console.log("IPDStudentTypeData:", IPDStudentTypeData);
+  console.log("IPDTwoDimensionalData:", IPDTwoDimensionalData);
+  console.log("IPDThreeDimensionalData:", IPDThreeDimensionalData);
   
   initBarChart();
   initScatter2DChart();

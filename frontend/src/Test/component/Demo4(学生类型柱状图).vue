@@ -4,7 +4,9 @@ import * as echarts from "echarts";
 import {studentTypeData} from '@/types/IPDValues.js'
 
 // 新的 JSON 数据
-const personaData = studentTypeData
+const personaData = ref(studentTypeData)
+
+
 
 const barRef = ref(null);
 let barChart = null;
@@ -17,13 +19,13 @@ const initCharts = () => {
     tooltip: { trigger: "axis" },
     xAxis: {
       type: "category",
-      data: personaData.labels
+      data: personaData.value.labels
     },
     yAxis: { type: "value" },
     series: [
       {
         type: "bar",
-        data: personaData.values,
+        data: personaData.value.values,
         itemStyle: { color: "#5470C6" }
       }
     ]
