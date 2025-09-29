@@ -77,8 +77,8 @@ onMounted(() => {
     </div>
 
     <!-- 图表区域 -->
-    <div class="bg-white rounded-md shadow p-3 flex-1">
-      <div ref="chartRef" class="w-full h-full"></div>
+    <div class="bg-white rounded-md shadow p-3 flex-1 min-h-[500px]">
+      <div ref="chartRef" class="w-full h-full min-h-[500px]"></div>
     </div>
   </div>
 </template>

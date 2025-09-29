@@ -94,49 +94,95 @@ export const useUploadStore = defineStore('upload', () => {
         error.value   = null
     }
         async function startAnalyze(dataId: string) {
-        try{
-            /* 1. 发起任务 */
-            const task = await AnalysisService.startAnalysis({ dataid: dataId })
-            /* 2. 把状态先置为“分析中” */
-            const idx = items.value.findIndex(it => it.id === dataId)
-            if (idx === -1) return
+            try{
+                /* 1. 发起任务 */
+                const task = await AnalysisService.startAnalysis({ dataid: dataId })
+                analyzedList.value.push({
+                    dataid: dataId,
+                    taskid: task.taskid,
+                    status: TaskStatus.PENDING,
+                    progress:0
+                });
+                console.log(task)
+                const itemIdx = items.value.findIndex(it => it.id === dataId)
+                if (itemIdx === -1) return
 
-            /* 初始状态 */
-            items.value[idx].status = '等待中'
-            items.value[idx].progress = 0
+                /* 初始状态 */
+                items.value[itemIdx].status = '等待中'
+                items.value[itemIdx].progress = 0
 
-            const poll = setInterval(async () => {
-                try {
-                    const st = await AnalysisService.getStatus(task.taskid)
-                    /* 实时进度 */
-                    items.value[idx].progress = st.progress ?? 0
+                // 假进度条相关变量
+                const startTime = Date.now()
+                const totalDuration = 4 * 60 * 1000 // 5分钟
+                let fakeProgress = 0
 
-                    if (st.status === 'COMPLETED') {
+                const poll = setInterval(async () => {
+                    try {
+                        const st = await AnalysisService.getStatus(task.taskid)
+
+                        // 计算假进度（5分钟内从0到99%）
+                        const elapsed = Date.now() - startTime
+                        fakeProgress = Math.min(99, Math.floor((elapsed / totalDuration) * 100))
+
+                        if (st.status === 'PROCESSING'){
+                            items.value[itemIdx].status='分析中'
+                            items.value[itemIdx].progress = fakeProgress; // 使用假进度
+                        }
+
+                        // 找到 analyzedList 中对应的项进行更新
+                        const currentAnalyzedItem = analyzedList.value.find(a => a.dataid === dataId);
+                        if (currentAnalyzedItem) {
+                            currentAnalyzedItem.status = st.status;
+                            currentAnalyzedItem.progress = fakeProgress; // 使用假进度
+                        }
+
+                        if (st.status === 'COMPLETED') {
+                            clearInterval(poll)
+                            if (items.value[itemIdx]) {
+                                items.value[itemIdx].status = '已分析'
+                                items.value[itemIdx].progress = 100 // 完成时设为100
+                            }
+                            if (currentAnalyzedItem) {
+                                currentAnalyzedItem.status = TaskStatus.COMPLETED;
+                                currentAnalyzedItem.progress = 100; // 完成时设为100
+                            }
+                            return
+                        }
+
+                        if (st.status === 'FAILED') {
+                            clearInterval(poll)
+                            if (items.value[itemIdx]) {
+                                items.value[itemIdx].status = '分析失败'
+                                items.value[itemIdx].progress = 0
+                            }
+                            if (currentAnalyzedItem) {
+                                currentAnalyzedItem.status = TaskStatus.FAILED;
+                                currentAnalyzedItem.progress = 0;
+                            }
+                            return
+                        }
+                    } catch (pollError) {
+                        // 轮询过程中发生错误
                         clearInterval(poll)
-                        items.value[idx].status = '已分析'
-                        items.value[idx].progress = 100
-                        return
+                        if (items.value[itemIdx]) {
+                            items.value[itemIdx].status = '分析失败'
+                            items.value[itemIdx].progress = 0
+                        }
+                        const currentAnalyzedItem = analyzedList.value.find(a => a.dataid === dataId);
+                        if (currentAnalyzedItem) {
+                            currentAnalyzedItem.status = TaskStatus.FAILED;
+                            currentAnalyzedItem.progress = 0;
+                        }
+                        console.error(`轮询任务 ${task.taskid} 失败`, pollError)
                     }
-                    if (st.status === 'FAILED') {
-                        clearInterval(poll)
-                        items.value[idx].status = '分析失败'
-                        items.value[idx].progress = 0
-                        return
-                    }
-                } catch {
-                    clearInterval(poll)
-                    items.value[idx].status = '分析失败'
-                    items.value[idx].progress = 0
-                }
-            }, 1000)
-
-            return task.taskid
-        }catch (e: unknown) {
-            /* 404/500/网络错误 统一走这里 */
-            const idx = items.value.findIndex(it => it.id === dataId)
-            if (idx !== -1) items.value[idx].status = '分析失败'
-            console.error('启动分析失败', e)
-        }
+                }, 1000)
+                return task.taskid
+            }catch (e: unknown) {
+                /* 404/500/网络错误 统一走这里 */
+                const idx = items.value.findIndex(it => it.id === dataId)
+                if (idx !== -1) items.value[idx].status = '分析失败'
+                console.error('启动分析失败', e)
+            }
         }
         const getTaskIdByDataId = (dataId: string): string | undefined =>
             analyzedList.value.find(a => a.dataid === dataId)?.taskid

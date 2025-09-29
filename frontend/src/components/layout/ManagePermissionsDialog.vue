@@ -41,13 +41,13 @@ import type {UpdateUserRequest} from "@/types/users.ts";
 const userStore = useUsersStore();
 // 定义 Props 接口
 interface Props {
-  userId?: number; // 改为 number 类型
+  userId?: string;
   username?: string;
   phone?: string;
   permission?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
-  userId: 0,
+  userId: '0',
   username: '',
   phone: '',
   permission: ''
@@ -108,9 +108,7 @@ const onSubmit: SubmissionHandler = async (values, actions) => {
     ElMessage.success({
       message: `用户 ${updatedUser.username} 信息更新成功！`,
     });
-    // ---------------------------------
-    // 成功后重置表单（只重置密码字段，保持其他字段的最新值）
-    actions.resetForm({ values: { ...validatedValues, password: '' } });
+    isDialogOpen.value = false;
   } catch (error: any) {
     // --- 错误处理，只 log 和抛出，不显示 ElMessage.error ---
     if (error instanceof z.ZodError) {
@@ -124,10 +122,11 @@ const onSubmit: SubmissionHandler = async (values, actions) => {
     // -----------------------------------------------------
   }
 };
+const isDialogOpen = ref(false)
 </script>
 <template>
   <Form v-slot="{ handleSubmit }" as="" keep-values :validation-schema="permissionSchema" :initial-values="formInitialValues">
-    <Dialog>
+    <Dialog v-model:open="isDialogOpen">
       <DialogTrigger as-child>
         <Button class="bg-blue-500 text-white text-xs hover:bg-blue-600 transition-colors py-2 px-3 rounded">
           管理权限

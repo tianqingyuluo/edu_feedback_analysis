@@ -10,6 +10,7 @@ export interface AnalysisInit {
     dataid: string;
     taskid: string;
     status:  TaskStatus;
+    progress?: number;
 }
 
 /* 新加：批量返回 */
@@ -36,7 +37,8 @@ export interface AnalysisResult {
     dataid: number;
     created_at: string;
     summary: object;
-    detailed_results: any;
+    model_predictions:any;
+    statistical_analyses:any;
 }
 /* ===== 后端整包包装（服务函数内部用） ===== */
 export interface Resp<T> {
