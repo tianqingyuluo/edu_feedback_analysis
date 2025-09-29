@@ -14,8 +14,7 @@ import type { AppRoute } from '@/store/routeStore.ts'; // 导入 AppRoute 类型
 const navItems = [
   { name: '数据管理', path: '/admin/data-hub' },
   { name: '人员管理', path: '/admin/user-mgmt' },
-  { name: '分析管理', path: '/admin/analytics' },
-  { name: 'AI 对话', path: '/admin/ai-chat' },
+  { name: '分析管理', path: '/admin/analytics' }
 ];
 
 const route = useRoute();

@@ -140,7 +140,7 @@ export const useUploadStore = defineStore('upload', () => {
         }
         const getTaskIdByDataId = (dataId: string): string | undefined =>
             analyzedList.value.find(a => a.dataid === dataId)?.taskid
-    return { items, total, page, size, loading, error, fetchPage, changePage,analyzedList,startAnalyze,getTaskIdByDataId }},
+    return { items, total, page, size, loading, error, fetchPage, changePage,analyzedList,startAnalyze,getTaskIdByDataId,clear }},
     {
         persist: true
     })
