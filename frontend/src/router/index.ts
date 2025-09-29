@@ -7,7 +7,6 @@ const PersonManagement = () => import('@/views/PersonManagement.vue')
 const DataManagement   = () => import('@/views/DataManagement.vue')
 const ExcelManagement  = () => import('@/views/ExcelManagement.vue')
 
-
 const routes = [
     {
         path: '/',
