@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {useUploadStore} from "@/store/uploadStore.ts";
 
 const routesStore = useRoutesStore();
 const router = useRouter();
@@ -33,6 +34,11 @@ const handleLogout = async () => {
   const userStore = useUserStore();
   userStore.removeUserInfo(); // 移除当前用户身份信息
   userStore.removeToken();   // 移除认证token
+  const routerStore = useRoutesStore();
+  const uploadStore = useUploadStore();
+  routerStore.clearRoutes();
+  uploadStore.clear();
+
   await router.push('/login');
 };
 </script>
