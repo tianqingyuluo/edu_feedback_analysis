@@ -50,7 +50,7 @@ const initScatter2DChart = () => {
   }));
   
   scatter2DChart.setOption({
-    title: {text: "学生各画像影响因素"},
+    title: {text: "学生画像影响因素"},
     tooltip: {
       trigger: "item",
       formatter: (params) =>
@@ -86,7 +86,7 @@ const initScatter3DChart = () => {
   }));
   
   scatter3DChart.setOption({
-    title: {text: "学生各画像影响因素三维"},
+    title: {text: "学生画像影响因素三维"},
     tooltip: {
       formatter: (params) =>
           `${params.seriesName}<br/>PC1: ${params.value[0]}<br/>PC2: ${params.value[1]}<br/>PC3: ${params.value[2]}`,
