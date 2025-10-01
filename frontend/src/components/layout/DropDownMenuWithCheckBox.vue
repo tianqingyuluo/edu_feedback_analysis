@@ -48,11 +48,19 @@ const isAcademyAllSelected = (academy: Academy) =>
 
 const toggleAcademySelection = (academy: Academy) => {
   const all = isAcademyAllSelected(academy)
-  let next = props.modelValue.filter(
-      m => !academy.majors.some(ma => ma.name === m.name),
-  )
-  if (!all) next.push(...academy.majors.filter(m => !isMajorSelected(m)))
-  emit('update:modelValue', next)
+
+  if (all) {
+    const next = props.modelValue.filter(
+      m => !academy.majors.some(ma => ma.name === m.name)
+    )
+    emit('update:modelValue', next)
+  } else {
+    const allMajors = [...props.modelValue, ...academy.majors]
+    const next = allMajors.filter((major, index, array) =>
+      array.findIndex(m => m.name === major.name) === index
+    )
+    emit('update:modelValue', next)
+  }
 }
 
 const handleMajorSelect = (major: Major) => {

@@ -113,7 +113,7 @@ export const useUploadStore = defineStore('upload', () => {
 
                 // 假进度条相关变量
                 const startTime = Date.now()
-                const totalDuration = 4 * 60 * 1000 // 5分钟
+                const totalDuration = 20 * 1000 // 20秒
                 let fakeProgress = 0
 
                 const poll = setInterval(async () => {

@@ -51,8 +51,8 @@ const updateChart = () => {
         return `${params.seriesName}<br/>专业：${params.name}<br/>课堂参与：${x}<br/>教学满意度：${y}<br/>人数：${size}`
       }
     },
-    xAxis: { name: '课堂参与度', type: 'value' },
-    yAxis: { name: '教学投入满意度', type: 'value' },
+    xAxis: { name: '学生的课堂参与度', type: 'value' },
+    yAxis: { name: '学生对教师教学投入满意度', type: 'value' },
     series
   }
 

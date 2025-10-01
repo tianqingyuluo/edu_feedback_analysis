@@ -45,14 +45,15 @@
 
       <!-- 图表区 -->
       <div class="flex-1 min-h-[80vh]">
-        <EHI v-if="activeChart === 'EHI'" />
-        <RPI v-if="activeChart === 'RPI'" />
-        <BubbleChart v-if="activeChart === 'Bubble'" />
-        <MetricChart v-if="activeChart === 'Metric'" />
-        <TimePie v-if="activeChart === 'pie'" />
-        <IPD v-if="activeChart === 'IPD'" />
-        <DPFE v-if="activeChart === 'DPFE'" />
-        <CSI v-if="activeChart === 'CSI'" />
+        <EHI v-if="activeChart === '学业综合健康指数'" />
+        <RPI v-if="activeChart === '学生资源感知指数'" />
+        <BubbleChart v-if="activeChart === '师生互动关联气泡图'" />
+        <MetricChart v-if="activeChart === '学业成熟度跨年级对比'" />
+        <TimePie v-if="activeChart === '学生时间分配饼图'" />
+        <IPD v-if="activeChart === '学生画像分布'" />
+        <DPFE v-if="activeChart === '学生多方面满意度'" />
+        <CSI v-if="activeChart === '学生整体满意度'" />
+        <!-- AIchat 已移到 Dialog，不再在这里渲染 -->
       </div>
     </div>
   </div>
@@ -104,9 +105,9 @@ const route = useRoute()
 const reportId = ref<string>(route.params.reportId as string)
 //取一个名字加在 ChartName， ChartName里（上面的是类，下面的是实例），和图表区的名字对的上就行
 /* ---------- 图表切换 ---------- */
-type ChartName = 'EHI' | 'RPI' | 'Bubble' | 'Metric' | 'pie' | 'IPD' | 'DPFE' | 'CSI'
-const activeChart = ref<ChartName>('EHI')
-const  ChartName: ChartName[] = ['EHI', 'RPI', 'Bubble', 'Metric', 'pie', 'IPD', 'DPFE', 'CSI']
+type ChartName = '学业综合健康指数' | '学生资源感知指数' | '师生互动关联气泡图' | '学业成熟度跨年级对比' | '学生时间分配饼图' | '学生画像分布' | '学生多方面满意度' | '学生整体满意度'
+const activeChart = ref<ChartName>('学业综合健康指数')
+const  ChartName: ChartName[] = ['学业综合健康指数', '学生资源感知指数', '师生互动关联气泡图', '学业成熟度跨年级对比', '学生时间分配饼图', '学生画像分布', '学生多方面满意度', '学生整体满意度']
 //动态选中样式，不用管
 const menuItemClass = (key: ChartName) => [
   'px-4 py-2 rounded-md cursor-pointer text-sm font-medium transition',
