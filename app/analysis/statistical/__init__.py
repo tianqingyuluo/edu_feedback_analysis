@@ -12,6 +12,7 @@ from app.analysis.statistical.correlation_based_RPI_builder.RPICalculator import
 from app.analysis.statistical.student_portrait_chart import analyze_student_persona
 from app.analysis.statistical.satisfaction_part_chart import analyze_feedback_satisfaction
 from app.analysis.statistical.satisfaction_whole_chart import analyze_feedback
+from app.analysis.statistical.student_satisfaction_route_sankey_chart import analysis
 
 __all__ = [
     'create_radar_echarts_json',
@@ -23,4 +24,5 @@ __all__ = [
     'analyze_student_persona',
     'analyze_feedback_satisfaction',
     'analyze_feedback',
+    'analysis'
 ]

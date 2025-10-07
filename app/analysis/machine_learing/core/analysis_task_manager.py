@@ -115,6 +115,10 @@ class AnalysisTaskManager:
                 "function": statistical.analyze_feedback,
                 "description": "整体满意度分析",
             },
+            "student_satisfaction_route_sankey_chart": {
+                "function": statistical.analysis,
+                "description": "学生满意度路线图分析"
+            }
         }
 
         # 用来存储各个分析项和对应的数据库记录的映射

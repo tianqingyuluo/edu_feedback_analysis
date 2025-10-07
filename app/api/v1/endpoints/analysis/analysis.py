@@ -47,7 +47,7 @@ async def start_analysis_task(
     """
     try:
         # 检查数据文件是否存在
-        if not await analysis_service.check_data_file_exists(request.data_id, db):
+        if not await analysis_service.check_data_file_exists(request.dataid, db):
             error_response = BaseHTTPResponse(
                 http_status=404,
                 message="指定的数据文件不存在"
@@ -55,7 +55,7 @@ async def start_analysis_task(
             return error_response
         
         # 创建分析任务
-        task = await analysis_operation_service.create_and_queue_analysis_task(db,request.data_id,)
+        task = await analysis_operation_service.create_and_queue_analysis_task(db,request.dataid,)
 
 
         task_metadata = AnalysisMetaData(
@@ -63,7 +63,6 @@ async def start_analysis_task(
             dataid=str(task.data_id),
             status=task.status
         )
-        
         return BaseHTTPResponse(
             http_status=202,
             message=task_metadata

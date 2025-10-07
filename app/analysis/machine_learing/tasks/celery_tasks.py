@@ -3,6 +3,7 @@ Celery 任务定义
 定义分析任务的异步执行逻辑
 """
 
+import traceback
 import pandas as pd
 from typing import Dict, Any
 
@@ -36,8 +37,25 @@ def execute_analysis_task(self, task_id: int, data_id: int) -> Dict[str, Any]:
     """
     app_logger.info(f"开始执行分析任务: task_id={task_id}, data_id={data_id}")
     
+    def run_async_task(async_func):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            return loop.run_until_complete(async_func())
+        finally:
+            # 确保所有异步任务完成
+            pending = asyncio.all_tasks(loop)
+            if pending:
+                loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+            loop.close()
+    
     try:
-        # 获取数据库会话
+        # # 获取数据库会话
+        # try:
+        #     loop = asyncio.get_running_loop()
+        # except RuntimeError:
+        #     loop = asyncio.new_event_loop()
+        #     asyncio.set_event_loop(loop)
         async def init_db():
             if not db_manager.engine:
                 await db_manager.init()
@@ -89,15 +107,17 @@ def execute_analysis_task(self, task_id: int, data_id: int) -> Dict[str, Any]:
                 return result
         
         # 运行异步任务
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            return loop.run_until_complete(run_task())
-        finally:
-            loop.close()
+        # loop = asyncio.new_event_loop()
+        # asyncio.set_event_loop(loop)
+        # try:
+        #     return loop.run_until_complete(run_task())
+        # finally:
+        #     loop.close()
+        return run_async_task(run_task)
             
     except Exception as e:
         app_logger.error(f"执行分析任务失败: task_id={task_id}, error={str(e)}")
+        app_logger.error(f"详情:{traceback.format_exc()}")
         
         # 更新任务状态为失败
         async def update_task_status():
@@ -111,18 +131,35 @@ def execute_analysis_task(self, task_id: int, data_id: int) -> Dict[str, Any]:
                     task.summary = json.dumps({"error": str(e)}, ensure_ascii=False)
                     await session.commit()
         
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(update_task_status())
-        finally:
-            loop.close()
+        # loop = asyncio.new_event_loop()
+        # asyncio.set_event_loop(loop)
+        # try:
+        #     loop.run_until_complete(update_task_status())
+        # finally:
+        #     loop.close()
         
+        run_async_task(update_task_status)
         return {
             "task_id": task_id,
             "status": "failed",
             "error": str(e)
         }
+        
+    finally:
+        if db_manager and db_manager.engine:
+            async def cleanup_db():
+                await db_manager.engine.dispose()
+            try:
+                loop = asyncio.get_running_loop()
+                loop.run_until_complete(cleanup_db())
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    loop.run_until_complete(cleanup_db())
+                finally:
+                    loop.close()
+    
 
 
 async def _load_data_by_id(task_id: int, data_id: int, db: AsyncSession) -> pd.DataFrame:
