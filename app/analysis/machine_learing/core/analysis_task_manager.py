@@ -365,6 +365,12 @@ class AnalysisTaskManager:
         if not task_dir.exists():
             raise FileNotFoundError(f"任务目录不存在: {task_dir}")
 
+        # 先看有没有结果文件
+        comprehensive_result_file = task_dir / "comprehensive_analysis.json"
+        if comprehensive_result_file.exists():
+            with open(comprehensive_result_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+
         # 加载任务信息
         results_file = task_dir / "results.json"
         if not results_file.exists():

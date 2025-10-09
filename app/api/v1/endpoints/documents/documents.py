@@ -12,7 +12,7 @@ from app.core.logging import app_logger
 
 router = APIRouter()
 
-@router.post("../upload", dependencies=[Depends(get_current_user)])
+@router.post("/upload", dependencies=[Depends(get_current_user)])
 async def upload_document(
     file: Annotated[UploadFile, File()],
     db: AsyncSession = Depends(get_db_session),
@@ -31,10 +31,10 @@ async def upload_document(
             )
 
         # 检查文件大小 (50MB限制)
-        if file.size and file.size > 50 * 1024 * 1024:
+        if file.size and file.size > 100 * 1024 * 1024:
             return HttpResponseWithData(
                 http_status=400,
-                message="文件大小不能超过50MB"
+                message="文件大小不能超过100MB"
             )
 
         result = await document_service.upload_document(file, db)
@@ -139,7 +139,7 @@ async def get_document(
             http_status=200,
             message="获取文档信息成功",
             data={
-                "id": document.id,
+                "id": str(document.id),
                 "filename": document.filename,
                 "file_type": document.file_type,
                 "file_size": document.file_size,
@@ -174,7 +174,7 @@ async def get_documents(
         documents_data = []
         for doc in result["documents"]:
             documents_data.append({
-                "id": doc.id,
+                "id": str(doc.id),
                 "filename": doc.filename,
                 "file_type": doc.file_type,
                 "file_size": doc.file_size,
