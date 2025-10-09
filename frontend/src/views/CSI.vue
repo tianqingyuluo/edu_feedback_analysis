@@ -1,13 +1,14 @@
 <script setup>
 import {ref, onMounted, onBeforeUnmount, inject} from "vue";
 import * as echarts from "echarts";
+import CommentFollowUp from "@/components/layout/CommentFollowUp.vue";
 
 
 
 const SCIOSatisfactionDistributionStruct = inject("SCIOSatisfactionDistributionStruct");
 const SCISOverallSatisfactionStruct = inject("SCISOverallSatisfactionStruct");
 const SCISSatisfactionContributionStruct = inject("SCISSatisfactionContributionStruct");
-
+const comments = inject('comments')
 // ========== 1. 满意度分布 ==========
 const distRef = ref(null);
 let distChart = null;
@@ -158,6 +159,10 @@ onBeforeUnmount(() => {
   
   <!-- 区分群体最重要的维度 -->
   <div ref="contribRef" class="chart h-[500px]"></div>
+  <CommentFollowUp
+      :comment="comments.satisfaction_whole_chart"
+      :chart="SCIOSatisfactionDistributionStruct"
+  />
 </div>
 </template>
 

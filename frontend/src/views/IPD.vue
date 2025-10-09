@@ -3,7 +3,8 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
 import "echarts-gl"; // 3D 支持
 import {inject} from "vue";
-
+import CommentFollowUp from "@/components/layout/CommentFollowUp.vue";
+const comments = inject('comments')
 const IPDStudentTypeData = inject('IPDStudentTypeData')
 const IPDTwoDimensionalData = inject('IPDTwoDimensionalData')
 const IPDThreeDimensionalData = inject('IPDThreeDimensionalData')
@@ -148,6 +149,10 @@ onBeforeUnmount(() => {
   
   <!-- PCA 3D 散点图 -->
   <div ref="scatter3DRef" class="chart chart-3d"></div>
+  <CommentFollowUp
+      :comment="comments.student_portrait_chart"
+      :chart="IPDStudentTypeData"
+  />
 </div>
 </template>
 

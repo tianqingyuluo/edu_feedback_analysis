@@ -1,15 +1,18 @@
 <!-- views/HomeView.vue -->
 <script setup lang="ts">
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, inject} from 'vue'
 import FiltersBar from '@/components/layout/gradeFilter.vue'
 import HealthGauge from '@/components/layout/HealthGauge.vue'
 import RadarChart from '@/components/layout/RadarChart.vue'
-import type { Major } from '@/types/majorModels.ts'
+import type {Academy, Major} from '@/types/majorModels.ts'
+import CommentFollowUp from "@/components/layout/CommentFollowUp.vue";
+import type {Comments} from "@/types/analysis.ts";
 
 const selectedMajorsFiltered = ref<Major[]>([]);
 const selectedGradeFiltered = ref<string[]>([]);
 const calculatedEHI = ref<number>(0);
-
+const ehi = inject<Academy[]>('academies')
+const comments = inject<Comments>('comments')
 // 定义一个常量用于指明 EHI 值的索引
 const EHI_DATA_INDEX = 7;
 
@@ -74,7 +77,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dashboard-layout p-6 bg-gray-100 h-[80vh]">
+  <div class="dashboard-layout p-6 bg-gray-100 min-h-[80vh]">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">学生健康度分析仪表盘</h1>
     <div class="mb-6">
       <FiltersBar
@@ -95,6 +98,10 @@ onMounted(() => {
       </div>
     </div>
   </div>
+  <CommentFollowUp
+      :comment="comments.correlation_based_EHI_builder"
+      :chart="ehi"
+  />
 </template>
 
 <style scoped>

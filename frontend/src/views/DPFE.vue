@@ -3,11 +3,12 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
 
 import {inject} from "vue";
+import CommentFollowUp from "@/components/layout/CommentFollowUp.vue";
 
 
 const DPFESatisfactionPartData = inject('DPFESatisfactionPartData')
 const DPFEHeatmapData = inject('DPFEHeatmapData')
-
+const comments = inject('comments')
 
 // ========== 1. 多面板满意度分布 ==========
 const partRef = ref(null);
@@ -183,6 +184,10 @@ onBeforeUnmount(() => {
   
   <!-- 热力图 -->
   <div ref="heatmapRef" class="heatmap-chart"></div>
+  <CommentFollowUp
+      :comment="comments.satisfaction_part_chart"
+      :chart="DPFESatisfactionPartData"
+  />
 </div>
 </template>
 

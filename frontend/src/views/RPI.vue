@@ -1,16 +1,19 @@
 <!-- pages/ResourceHeatmapPage.vue -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, inject} from 'vue'
 import FiltersBar from '@/components/layout/RPIGradeFilter.vue'
 import HealthGauge from '@/components/layout/HealthGauge.vue'
 import RadarChart from '@/components/layout/RadarChart.vue'
 import ResourceHeatmap from '@/components/layout/ResourceHeatmap.vue'
-import type { Major } from '@/types/majorModels.ts'
+import type {Academy, Major} from '@/types/majorModels.ts'
 import RPIGradeFilter from "@/components/layout/RPIGradeFilter.vue";
+import CommentFollowUp from "@/components/layout/CommentFollowUp.vue";
+import type {Comments} from "@/types/analysis.ts";
 
 const selectedMajors = ref<Major[]>([])
 const selectedGrade = ref<string[]>([])
-
+const comments = inject<Comments>('comments')
+const rpi = inject<Academy[]>('rpiAcademies')
 // 仪表盘值（RPI）
 const ehiValue = ref(0)
 
@@ -98,4 +101,8 @@ onMounted(() => calculateEHI())
       />
     </div>
   </div>
+  <CommentFollowUp
+      :comment="comments.correlation_based_RPI_builder"
+      :chart="rpi"
+  />
 </template>

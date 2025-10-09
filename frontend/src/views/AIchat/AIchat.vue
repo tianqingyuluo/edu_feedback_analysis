@@ -10,39 +10,38 @@
 </template>
 
 <script setup lang="ts">
-import ChatHistory from './ChatHistory.vue'
 import ChatContent from './ChatContent.vue'
 import MessageInput from './MessageInput.vue'
-import { provide, ref } from 'vue'
-import type { Message} from './types'
+import {onMounted, provide, readonly, ref} from 'vue'
+import type {ChatMessage} from '@/types/Chat.ts'
+import {useRoute} from "vue-router";
+import ChatService from "@/api/chat.ts";
+import {useChatQueueStore} from "@/store/ChatQueueStore.ts";
 
-const historyList = ref<HistoryItem[]>([{ id: '1', title: '新建对话 1' }])
-const messages = ref<Message[]>([])
-const currentId = ref('1')
-
-provide('historyList', historyList)
+const messages = ref<ChatMessage[]>([])
+const route = useRoute()
+const taskId =ref<string>(route.params.reportId as string)
+const currentId=ref<string>('')
 provide('currentId', currentId)
+provide('taskId', taskId)
 provide('messages', messages)
+const loading = ref(true)
+provide('chatReady', readonly(loading))
 
-provide('sendMessage', (content: string) => {
-  messages.value.push({ id: Date.now().toString(), role: 'user', content })
-  setTimeout(() => {
-    messages.value.push({ id: Date.now() + 1 + '', role: 'assistant', content: 'AI：' + content })
-  }, 600)
+
+onMounted(async () => {
+  if (!taskId.value) return
+  currentId.value =(await ChatService.getChatRoom(taskId.value)).id
+  try {
+    loading.value = true
+    messages.value = await ChatService.getChatHistory(currentId.value)
+  } catch (e) {
+    console.error('拉历史失败', e)
+  } finally {
+    loading.value = false
+  }
 })
 
-provide('selectSession', (id: string) => {
-  currentId.value = id
-  messages.value = []
-})
-
-/* 2. 新建会话逻辑 */
-const onNewSession = () => {
-  const id = Date.now().toString()
-  historyList.value.unshift({ id, title: `新建对话 ${historyList.value.length + 1}` })
-  currentId.value = id
-  messages.value = []
-}
 </script>
 
 <style scoped>
