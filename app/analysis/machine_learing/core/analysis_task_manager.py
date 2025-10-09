@@ -26,8 +26,10 @@ from app.db.models.analysis import (
     SatisfactionPartData,
     SatisfactionWholeData,
     StudentPortraitData,
+    StudentSatisfactionRouteSankeyChartData
 )
 from app.service.analysis_service import AnalysisService
+from app.service.analysis_summary_rag_service import AnalysisSummaryRAGService
 from app.enum.enums import AnalysisStatusEnum
 
 
@@ -52,6 +54,9 @@ class AnalysisTaskManager:
         self.version_manager = ModelVersionManager(str(self.output_dir))
 
         self.analysis_service = AnalysisService()
+        
+        # 分析总结服务
+        self.summary_service = AnalysisSummaryRAGService()
 
         # 支持的模型类型
         self.supported_models = {
@@ -123,15 +128,16 @@ class AnalysisTaskManager:
 
         # 用来存储各个分析项和对应的数据库记录的映射
         self.db_map = {
-            "satisfaction_part" : SatisfactionPartData,
-            "satisfaction_whole" : SatisfactionWholeData,
-            "student_portrait" : StudentPortraitData,
+            "satisfaction_part_chart" : SatisfactionPartData,
+            "satisfaction_whole_chart" : SatisfactionWholeData,
+            "student_portrait_chart" : StudentPortraitData,
             "group_comparison_radar_chart" : GroupComparisonRadarChartData,
             "teacher_student_interaction_bubble_chart" : TeacherStudentInteractionBubbleChartData,
             "student_time_allocation_pie_chart" : StudentTimeAllocationPieChartData,
             "correlation_based_EHI_builder" :CorrelationBasedEHIBuilderData,
             "correlation_based_RPI_builder" : CorrelationBasedRPIBuilderData,
-            "academic_maturity_by_grade_aggregator" : AcademicMaturityProcessorData
+            "academic_maturity_by_grade_aggregator" : AcademicMaturityProcessorData,
+            "student_satisfaction_route_sankey_chart" : StudentSatisfactionRouteSankeyChartData,
         }
 
     async def create_analysis_task(
@@ -425,14 +431,14 @@ class AnalysisTaskManager:
                     else:
                         prediction_result = {"error": f"未知的模型类型: {model_name}"}
 
-                    # # 调用llm来给模型结果进行总结
-                    # comment = ""
-                    # prediction_result["comment"] = comment
+                    # 调用LLM来给模型结果进行总结
+                    comment = self.summary_service.summarize_model_prediction(model_name, prediction_result)
+                    prediction_result["comment"] = comment
 
                     task_data = self.db_map[model_name](
                         task_id= int(task_id),
                         data= prediction_result,
-                        # comment=comment,
+                        comment=comment,
                         created_at=datetime.now(timezone.utc)
                     )
                     db.add(task_data)
@@ -441,7 +447,7 @@ class AnalysisTaskManager:
                     comprehensive_results["model_predictions"][model_name] = (
                         prediction_result
                     )
-                    comprehensive_results['comments'][model_name] = "" # TODO: 后续添加AI总结
+                    comprehensive_results['comments'][model_name] = comment
 
                     app_logger.info(f"模型 {model_name} 预测完成")
 
@@ -483,15 +489,14 @@ class AnalysisTaskManager:
                     comprehensive_results["statistical_analyses"][analysis_name] = (
                         analysis_data.get("result", {})
                     )
-                    comprehensive_results['comments'][analysis_name] = "" # TODO 后续添加ai评价
-                    # comprehensive_results["statistical_analyses"][analysis_name][
-                    #     "comment"
-                    # ] = analysis_data.get("comment", "")
+                    # 生成统计分析的AI总结
+                    analysis_comment = self.summary_service.summarize_statistical_analysis(analysis_name, analysis_data.get("result", {}))
+                    comprehensive_results['comments'][analysis_name] = analysis_comment
 
                     task_data = self.db_map[analysis_name](
                         task_id= int(task_id),
                         data= analysis_data.get("result", {}),
-                        # comment=analysis_data.get("comment", ""),
+                        comment=analysis_comment,
                         created_at=datetime.now(timezone.utc)
                     )
                     db.add(task_data)

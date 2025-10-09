@@ -50,7 +50,7 @@ import os
 from typing import List, Dict, Any, Set
 
 from langchain.schema import Document
-from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
 
 from app.core.config import settings
 from app.core.logging import app_logger

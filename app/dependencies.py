@@ -8,6 +8,8 @@ from app.core.security import decode_jwt_token
 from app.db.models.user import User
 from app.enum.enums import UserRole
 from app.exception.exceptions.user import UserNotFoundError, AuthenticationError, AuthorizationError
+from app.service.document_service import DocumentService, KnowledgeBaseService
+from app.service.rag_service import RAGService
 
 # 创建HTTP Bearer安全方案实例
 security = HTTPBearer()
@@ -80,3 +82,23 @@ async def get_current_admin_user(
     if current_user.role.value != UserRole.ADMIN.value:
         raise AuthorizationError("需要管理员权限")
     return current_user
+
+# 服务依赖注入
+def get_document_service() -> DocumentService:
+    """获取文档服务实例"""
+    return DocumentService()
+
+def get_knowledge_base_service() -> KnowledgeBaseService:
+    """获取知识库服务实例"""
+    return KnowledgeBaseService()
+
+# 全局RAG服务实例
+_rag_service_instance = None
+
+def get_rag_service() -> RAGService:
+    """获取RAG服务实例（单例）"""
+    global _rag_service_instance
+    if _rag_service_instance is None:
+        _rag_service_instance = RAGService()
+        # 在这里可以加载已存在的知识库
+    return _rag_service_instance

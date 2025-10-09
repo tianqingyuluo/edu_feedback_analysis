@@ -134,7 +134,7 @@ def training_with_EMOTE_bayes_search(X, y) -> LGBMClassifier:
         sampler=optuna.samplers.TPESampler(seed=42)  # 使用TPE采样器
     )
     app_logger.info("开始贝叶斯优化...")
-    study.optimize(objective, n_trials=30)  # 30次试验
+    study.optimize(objective, n_trials=1)  # 30次试验
     # 输出最佳结果
     app_logger.info("\n优化完成")
     app_logger.info("最佳分数:", study.best_value)

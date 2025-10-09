@@ -30,12 +30,12 @@ def create_rag_chain(retriever, prompt=None, streaming=True):
     # 构建RAG链
     rag_chain = (
         {
-            "context": retriever | RunnablePassthrough(),
+            "context": retriever,
             "question": RunnablePassthrough(),
         }
         | prompt
         | chat_model
-        | StrOutputParser
+        | StrOutputParser()
     )
     return rag_chain, callback if streaming else None
 

@@ -5,9 +5,10 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logging import app_logger
-from app.dependencies import get_db_session
+from app.dependencies import get_db_session, get_rag_service
+from app.schemas.question import Question
 from app.service.rag_service import RAGService
-from app.db.models.chat import ChatMessage
+from app.db.models.chat import ChatMessage, Chat
 
 router = APIRouter()
 
@@ -17,10 +18,11 @@ router = APIRouter()
 #     yield "data: [DONE]\n\n"
 
 async def generate_stream_response_with_storage(
-    question: str, 
+    question: str,
     chat_id: int,
     rag_service: RAGService,
-    db: AsyncSession
+    db: AsyncSession,
+    kb_id: int = None
 ) -> AsyncGenerator[str, None]:
     """
     生成流式响应并收集完整内容用于数据库存储
@@ -29,7 +31,7 @@ async def generate_stream_response_with_storage(
     
     # 流式生成响应
     try:
-        db_chat = await db.get(ChatMessage, chat_id)
+        db_chat = await db.get(Chat, chat_id)
         if db_chat is None:
             app_logger.error(f"Chat {chat_id} not found")
             return
@@ -41,12 +43,12 @@ async def generate_stream_response_with_storage(
             content=question
         )
         db.add(user_message)
-        await db.commit()
+        await db.flush()
     except Exception as e:
         app_logger.error(f"保存用户消息到数据库失败: {e}")
         await db.rollback()
 
-    async for token in rag_service.stream_query(question):
+    async for token in rag_service.stream_query(question, kb_id):
         # 去除SSE格式标记，只保留实际内容
         clean_token = token.replace("data:", "").replace("\n\n", "")
         full_response += clean_token
@@ -72,14 +74,15 @@ async def generate_stream_response_with_storage(
 
         
 @router.post("/send/{chat_id}")
-async def send(question: str,
+async def send(question: Question,
                chat_id: str,
-               rag_service: RAGService = Depends(RAGService),
+               kb_id: int = None,
+               rag_service: RAGService = Depends(get_rag_service),
                db: AsyncSession = Depends(get_db_session)):
     """
     发送问题并且返回llm的流式响应
     """
     return StreamingResponse(
-        generate_stream_response_with_storage(question, int(chat_id), rag_service, db),
+        generate_stream_response_with_storage(question.question, int(chat_id), rag_service, db, kb_id),
         media_type="text/event-stream"
     )

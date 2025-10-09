@@ -7,3 +7,6 @@ class BaseHTTPResponse(BaseModel):
 
     http_status: int
     message: str | dict[str, Any] | object = ""
+
+class HttpResponseWithData(BaseHTTPResponse):
+    data: Any = None
