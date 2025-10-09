@@ -4,12 +4,14 @@ import * as echarts from 'echarts'
 import { Button } from '@/components/ui/button'
 import type { Academy, Major } from '@/types/majorModels'
 import SingleSelectMenu from '@/components/layout/SingleSelectMenu.vue'
+import CommentFollowUp from "@/components/layout/CommentFollowUp.vue";
+import type {Comments} from "@/types/analysis.ts";
 
 /* ---------- 年级 ---------- */
 const gradeOptions = ['大一', '大二', '大三', '大四']
 const selectedGrade = ref<string>('大一')
 const academies = inject<Academy[]>('timeAcademies', [])
-
+const comments = inject<Comments>('comments')
 /* ---------- 专业单选 ---------- */
 const selectedMajor = ref<Major | null>(null)
 
@@ -64,7 +66,7 @@ watchEffect(() => {
 
 <template>
   <!-- 最外层：统一边距 -->
-  <div class="p-6 bg-gray-50 min-h-screen">
+  <div class="p-6 bg-gray-50 min-h-[80%]">
     <h1 class="text-2xl font-bold mb-4">时间分配分析</h1>
 
     <!-- 筛选栏白色卡片 -->
@@ -109,6 +111,10 @@ watchEffect(() => {
       </div>
     </div>
   </div>
+  <CommentFollowUp
+      :comment="comments.student_time_allocation_pie_chart"
+      :chart="academies"
+  />
 </template>
 
 <style scoped>

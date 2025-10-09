@@ -7,12 +7,14 @@ import { Progress } from '@/components/ui/progress'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {useRoutesStore} from "@/store/routeStore.ts";
+import {useUserStore} from "@/store/userStore.ts";
 const router = useRouter()
 /* ---------- store ---------- */
 const store = useUploadStore()
 const routeStore = useRoutesStore()
 const { items, total, page, size, loading, error, analyzedList } = storeToRefs(store)
-
+const userStore = useUserStore()
+const userRole = userStore.userInfo?.role ?? 'ADMIN'
 
 /* 分页 */
 function prev() {
@@ -22,7 +24,6 @@ function next() {
   if (page.value < Math.ceil(total.value / size.value)) store.changePage(page.value + 1)
 }
 
-/* 分析按钮（空逻辑） */
 async function handleAnalyze(id: string) {
   await store.startAnalyze(id)
 }
@@ -38,11 +39,11 @@ function handleSelect(dataId: string) {
   if (!row) return
 
   const routeName = row.filename.replace(/\.[^.]+$/, '')
-  const routePath = `/admin/report/${taskId}`
+  const routePath = `/admin/report/${taskId}/${dataId}`
 
   routeStore.addRoute(routePath, routeName)
 
-  router.push({ name: 'ReportShow', params: { reportId: taskId } })
+  router.push(`/admin/report/${taskId}/${dataId}`)
 }
 
 /* 首次加载 */
@@ -105,7 +106,8 @@ function handleFailReason(id: string) {
             <Button
                 v-if="r.status==='未分析'"
                 class="h-10 px-4"
-                @click="handleAnalyze(r.id)"
+                :disabled="userRole === 'USER'"
+            @click="handleAnalyze(r.id)"
             >分析</Button>
 
             <Progress

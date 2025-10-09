@@ -39,6 +39,20 @@ export interface AnalysisResult {
     summary: object;
     model_predictions:any;
     statistical_analyses:any;
+    comments:any;
+}
+
+export interface Comments {
+    academic_maturity_by_grade_aggregator: string
+    correlation_based_EHI_builder: string
+    correlation_based_RPI_builder: string
+    group_comparison_radar_chart: string
+    satisfaction_part_chart: string
+    satisfaction_whole_chart: string
+    student_portrait_chart: string
+    student_satisfaction_route_sankey_chart: string
+    student_time_allocation_pie_chart: string
+    teacher_student_interaction_bubble_chart: string
 }
 /* ===== 后端整包包装（服务函数内部用） ===== */
 export interface Resp<T> {

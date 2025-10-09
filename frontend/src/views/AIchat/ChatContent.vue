@@ -1,29 +1,36 @@
 <template>
   <main class="content" ref="box">
-    <div
+    <component
         v-for="msg in messages"
         :key="msg.id"
+        :is="msg.role === 'assistant' ? MarkdownBubble : UserTextBubble"
         :class="['bubble', msg.role]"
+        :content="msg.content"
     >
-      {{ msg.content }}
-    </div>
+    </component>
   </main>
 </template>
 
 <script setup lang="ts">
-import { inject, nextTick, ref, watch } from 'vue'
-import type { Message } from './types'
+import { inject, ref, onMounted, onBeforeUnmount } from 'vue'
+import type { ChatMessage } from '@/types/Chat.ts'
+import MarkdownBubble from "@/components/layout/MarkdownBubble.vue";
+import UserTextBubble from "@/views/UserTextBubble.vue";
 
-const messages = inject<Message[]>('messages')!
+const messages = inject<ChatMessage[]>('messages')!
 const box = ref<HTMLElement>()
 
-watch(
-    messages,
-    () => nextTick(() => {
-      box.value && (box.value.scrollTop = box.value.scrollHeight)
-    }),
-    { deep: true, flush: 'post' }
-)
+let ro: ResizeObserver | null = null
+
+onMounted(() => {
+  ro = new ResizeObserver(() => {
+    // 高度变化 → 说明新消息渲染完成
+    if (box.value) box.value.scrollTop = box.value.scrollHeight
+  })
+  if (box.value) ro.observe(box.value)
+})
+
+onBeforeUnmount(() => ro?.disconnect())
 </script>
 
 <style scoped>

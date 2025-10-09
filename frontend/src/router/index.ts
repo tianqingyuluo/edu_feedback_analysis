@@ -6,7 +6,7 @@ const Login = () => import('@/login/Index.vue')
 const PersonManagement = () => import('@/views/PersonManagement.vue')
 const DataManagement   = () => import('@/views/DataManagement.vue')
 const ExcelManagement  = () => import('@/views/ExcelManagement.vue')
-
+const DocumentManagement = () => import('@/views/KbDocList.vue')
 const routes = [
     {
         path: '/',
@@ -21,7 +21,8 @@ const routes = [
             { path: 'user-mgmt',   name: 'UserMgmt',   component: PersonManagement },
             { path: 'analytics',   name: 'Analytics',  component: DataManagement },
             { path: 'ai-chat',     name: 'AiChat',     component: AiChat },
-            { path: 'report/:reportId', name: 'ReportShow', component: () => import('@/views/Home.vue'), props: true },
+            { path: 'report/:reportId/:dataId', name: 'ReportShow', component: () => import('@/views/Home.vue'), props: true },
+            { path: 'Document', name: 'Document', component:DocumentManagement },
         ],
     },
     { path: '/login', name: 'Login', component: Login },

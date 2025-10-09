@@ -3,7 +3,8 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import * as echarts from "echarts";
 import "echarts-gl"; // 3D 支持
 import {inject} from "vue";
-
+import CommentFollowUp from "@/components/layout/CommentFollowUp.vue";
+const comments = inject('comments')
 const IPDStudentTypeData = inject('IPDStudentTypeData')
 const IPDTwoDimensionalData = inject('IPDTwoDimensionalData')
 const IPDThreeDimensionalData = inject('IPDThreeDimensionalData')
@@ -50,7 +51,7 @@ const initScatter2DChart = () => {
   }));
   
   scatter2DChart.setOption({
-    title: {text: "PCA降维前两维聚类散点图"},
+    title: {text: "学生画像影响因素"},
     tooltip: {
       trigger: "item",
       formatter: (params) =>
@@ -86,7 +87,7 @@ const initScatter3DChart = () => {
   }));
   
   scatter3DChart.setOption({
-    title: {text: "PCA前三主成分三维聚类散点图"},
+    title: {text: "学生画像影响因素三维"},
     tooltip: {
       formatter: (params) =>
           `${params.seriesName}<br/>PC1: ${params.value[0]}<br/>PC2: ${params.value[1]}<br/>PC3: ${params.value[2]}`,
@@ -148,6 +149,10 @@ onBeforeUnmount(() => {
   
   <!-- PCA 3D 散点图 -->
   <div ref="scatter3DRef" class="chart chart-3d"></div>
+  <CommentFollowUp
+      :comment="comments.student_portrait_chart"
+      :chart="IPDStudentTypeData"
+  />
 </div>
 </template>
 

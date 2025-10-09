@@ -18,7 +18,7 @@ export const useUsersStore = defineStore('users', {
             try {
                 const response = await UserService.getUsers();
                 this.users = response.users;
-                this.hasFetched = true; // 设置已获取标志
+                this.hasFetched = false; // 设置已获取标志
             } catch (error: any) {
                 this.error = error.message || '获取用户列表失败';
                 console.error('获取用户列表失败:', error);
