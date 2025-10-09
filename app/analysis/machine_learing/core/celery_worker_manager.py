@@ -19,7 +19,7 @@ class CeleryWorkerManager:
 
         self.worker_stopped.clear()
         self.worker_process = multiprocessing.Process(
-            target=self._run_worker, daemon=True
+            target=self._run_worker, daemon=False
         )
         self.worker_process.start()
         app_logger.info(f"Celery Worker 进程已启动，PID: {self.worker_process.pid}")

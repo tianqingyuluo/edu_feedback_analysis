@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     log_level: str
     openai_api_key: str
     openai_embedding_api_key: str
+    chat_openai_api_base: str
+    embedding_openai_api_base: str
     llm_model_name: str
     embedding_model_name: str
     chroma_persist_path: str

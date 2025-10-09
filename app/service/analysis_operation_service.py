@@ -156,7 +156,7 @@ class AnalysisService:
         return await self.task_manager.generate_comprehensive_analysis(
             task_id=str(task_id),
             db=session,
-            input_data=input_data,
+            # input_data=input_data,
             model_versions=model_versions,
         )
     

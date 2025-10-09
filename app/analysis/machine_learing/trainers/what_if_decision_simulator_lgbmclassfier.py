@@ -134,7 +134,7 @@ def training_with_EMOTE_bayes_search(X, y) -> LGBMClassifier:
         sampler=optuna.samplers.TPESampler(seed=42)  # 使用TPE采样器
     )
     app_logger.info("开始贝叶斯优化...")
-    study.optimize(objective, n_trials=100)  # 100次试验
+    study.optimize(objective, n_trials=1)  # 30次试验
     # 输出最佳结果
     app_logger.info("\n优化完成")
     app_logger.info("最佳分数:", study.best_value)
@@ -204,8 +204,8 @@ async def async_train(X: pd.DataFrame, y: pd.Series, score: float, taskid: str) 
         model = await future
 
     version_manager = ModelVersionManager(settings.machine_learning_models_path)
-    version = await version_manager.get_next_version('what-if_decision_simulator_LGBMClassfier')
-    path = settings.machine_learning_models_path + f"{taskid}/" + f'what-if_decision_simulator_LGBMClassfier_v{version}'
+    version = await version_manager.get_next_version('what_if_decision_simulator')
+    path = settings.machine_learning_models_path + f"{taskid}/" + f'what_if_decision_simulator_v{version}.pkl'
 
     def save_model_sync():
         with open(str(path), 'wb') as f:
@@ -213,4 +213,4 @@ async def async_train(X: pd.DataFrame, y: pd.Series, score: float, taskid: str) 
 
     await loop.run_in_executor(None, save_model_sync)
 
-    app_logger.info(f"模型已经保存到：{settings.machine_learning_models_path/'what-if_decision_simulator_LGBMClassfier'}")
+    app_logger.info(f"模型已经保存到：{settings.machine_learning_models_path + '/what_if_decision_simulator'}")

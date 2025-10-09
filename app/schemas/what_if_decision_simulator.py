@@ -6,7 +6,8 @@ class WhatIfInput(BaseModel):
     """
     whatif决策模拟器的前端输入数据模型
     """
-    features: dict[str, Any] # 特征名称 -> 特征值
+    features: list[dict[str, Any]] # 特征名称 -> 特征值
+    task_id: str
 
 class ClassProbability(BaseModel):
     """

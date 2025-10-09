@@ -12,8 +12,8 @@ from app.enum.enums import AnalysisStatusEnum
 
 class AnalysisTaskResultResponse(BaseModel):
     """分析任务结果响应"""
-    task_id: str = Field(..., description="任务ID")
-    data_id: str = Field(..., description="数据ID")
+    taskid: str = Field(..., description="任务ID")
+    dataid: str = Field(..., description="数据ID")
     created_at: datetime = Field(..., description="创建时间")
     summary: str = Field(..., description="任务摘要")
     detailed_results: Dict[str, Any] = Field(..., description="详细结果")
@@ -32,4 +32,4 @@ class AnalysisTaskStatusResponse(BaseModel):
 
 class AnalysisRequest(BaseModel):
     """分析任务请求"""
-    data_id: int = Field(..., description="数据ID")
+    dataid: int = Field(..., description="数据ID")
